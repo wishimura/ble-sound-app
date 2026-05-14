@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#8a6c3c"/>
+      <stop offset="1" stop-color="#3a2f22"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="600" fill="url(#g)"/>
+  <circle cx="650" cy="150" r="170" fill="#e9dfcd" opacity="0.28"/>
+  <circle cx="150" cy="490" r="120" fill="#e9dfcd" opacity="0.20"/>
+  <text x="64" y="312" font-family="sans-serif" font-size="54" font-weight="700" fill="#ffffff">湊町近代美術館</text>
+  <text x="64" y="360" font-family="sans-serif" font-size="25" fill="#ffffff" opacity="0.88">MINATO MACHI ART</text>
+</svg>

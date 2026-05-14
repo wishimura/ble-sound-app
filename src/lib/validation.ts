@@ -1,14 +1,21 @@
 import { z } from 'zod';
 
-/** Empty string / null / undefined -> null. Otherwise must be a valid http(s) URL. */
+/**
+ * Empty string / null / undefined -> null. Otherwise must be either an
+ * http(s) URL or a root-relative path (e.g. `/samples/guide.wav` for assets
+ * hosted by the app itself). Unsafe schemes such as `javascript:` are rejected.
+ */
 const optionalUrl = z
   .preprocess(
     (v) => (typeof v === 'string' && v.trim() === '' ? null : v),
     z
       .string()
       .trim()
-      .url('URL の形式が正しくありません')
-      .refine((u) => /^https?:\/\//i.test(u), 'http(s) の URL を入力してください')
+      .max(2000)
+      .refine(
+        (u) => /^https?:\/\//i.test(u) || /^\/[^\s]+$/.test(u),
+        'http(s):// で始まる URL、または / で始まるパスを入力してください',
+      )
       .nullable(),
   )
   .nullable()
