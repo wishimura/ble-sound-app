@@ -1,0 +1,23 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-sans: ui-sans-serif, system-ui, -apple-system, 'Segoe UI',
+    'Hiragino Kaku Gothic ProN', 'Noto Sans JP', Meiryo, sans-serif;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  @apply bg-canvas text-ink antialiased;
+  font-family: var(--font-sans);
+}
+
+/* Calmer default focus ring for the museum aesthetic. */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
