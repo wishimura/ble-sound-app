@@ -1,0 +1,166 @@
+-- ============================================================
+-- Museum Audio Guide — デモデータ投入用 SQL
+-- ============================================================
+-- Neon の SQL Editor（または psql）にそのまま貼り付けて実行できます。
+--
+-- ログイン情報（3アカウント共通パスワード）: password1234
+--   運営管理者          : operator@example.com    -> /operator/login
+--   美術館管理者(美術館): art-admin@example.com   -> /admin/login
+--   美術館管理者(水族館): aqua-admin@example.com  -> /admin/login
+--
+-- ※ 何度実行しても同じ状態になります（先に全削除してから投入）。
+-- ※ `npm run db:push` 済みならテーブルは作成済みなので、下の
+--    「STEP 1」はスキップして「STEP 2」だけ実行してもOKです。
+-- ============================================================
+
+
+-- ------------------------------------------------------------
+-- STEP 1: テーブル作成（未作成の場合のみ。作成済みなら無害にスキップ）
+-- ------------------------------------------------------------
+DO $$ BEGIN
+  CREATE TYPE museum_type AS ENUM ('museum', 'aquarium', 'zoo', 'other');
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
+
+DO $$ BEGIN
+  CREATE TYPE user_role AS ENUM ('museum_admin', 'operator');
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
+
+CREATE TABLE IF NOT EXISTS museums (
+  id          uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  name        text NOT NULL,
+  description text,
+  type        museum_type NOT NULL DEFAULT 'museum',
+  logo_url    text,
+  is_active   boolean NOT NULL DEFAULT true,
+  created_at  timestamptz NOT NULL DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS museum_users (
+  id            uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  museum_id     uuid REFERENCES museums(id) ON DELETE CASCADE,
+  email         text NOT NULL UNIQUE,
+  password_hash text NOT NULL,
+  role          user_role NOT NULL,
+  created_at    timestamptz NOT NULL DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS exhibits (
+  id              uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  museum_id       uuid NOT NULL REFERENCES museums(id) ON DELETE CASCADE,
+  exhibit_number  text NOT NULL,
+  title_ja        text NOT NULL,
+  title_en        text,
+  description_ja  text NOT NULL DEFAULT '',
+  description_en  text,
+  audio_url_ja    text,
+  audio_url_en    text,
+  image_url       text,
+  is_published    boolean NOT NULL DEFAULT false,
+  play_count      integer NOT NULL DEFAULT 0,
+  created_at      timestamptz NOT NULL DEFAULT now(),
+  updated_at      timestamptz NOT NULL DEFAULT now(),
+  CONSTRAINT exhibits_museum_number_unique UNIQUE (museum_id, exhibit_number)
+);
+
+
+-- ------------------------------------------------------------
+-- STEP 2: デモデータ投入
+-- ------------------------------------------------------------
+
+-- 既存データをクリア（再実行できるように）
+DELETE FROM exhibits;
+DELETE FROM museum_users;
+DELETE FROM museums;
+
+-- 施設（固定UUIDで投入し、後続のINSERTから参照する）
+INSERT INTO museums (id, name, description, type, logo_url, is_active) VALUES
+  ('11111111-1111-1111-1111-111111111111',
+   '湊町近代美術館',
+   '近現代の絵画・彫刻を中心に展示する美術館。落ち着いた空間で名作をお楽しみいただけます。',
+   'museum',
+   'https://picsum.photos/seed/artmuseum-logo/800/600',
+   true),
+  ('22222222-2222-2222-2222-222222222222',
+   'うみのいろ水族館',
+   '深海から沿岸まで、海の生きものたちの多様な世界をご紹介します。',
+   'aquarium',
+   'https://picsum.photos/seed/aquarium-logo/800/600',
+   true);
+
+-- ユーザー（パスワードは3アカウント共通: password1234）
+INSERT INTO museum_users (museum_id, email, password_hash, role) VALUES
+  (NULL,
+   'operator@example.com',
+   '$2a$10$xtRwcLnYs8y.6p.TSizfkOgTHox5Et0GtV5C.73als17TT0glltDi',
+   'operator'),
+  ('11111111-1111-1111-1111-111111111111',
+   'art-admin@example.com',
+   '$2a$10$xtRwcLnYs8y.6p.TSizfkOgTHox5Et0GtV5C.73als17TT0glltDi',
+   'museum_admin'),
+  ('22222222-2222-2222-2222-222222222222',
+   'aqua-admin@example.com',
+   '$2a$10$xtRwcLnYs8y.6p.TSizfkOgTHox5Et0GtV5C.73als17TT0glltDi',
+   'museum_admin');
+
+-- 展示（湊町近代美術館）
+INSERT INTO exhibits
+  (museum_id, exhibit_number, title_ja, title_en, description_ja, description_en,
+   audio_url_ja, audio_url_en, image_url, is_published, play_count)
+VALUES
+  ('11111111-1111-1111-1111-111111111111', '1', '朝の港', 'Harbor at Dawn',
+   '夜明けの港を描いた油彩画。淡い光と水面の反射が、静かな時間の流れを表現しています。',
+   'An oil painting of a harbor at dawn. The soft light and reflections on the water express the quiet passage of time.',
+   'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
+   'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3',
+   'https://picsum.photos/seed/harbor/800/600', true, 128),
+
+  ('11111111-1111-1111-1111-111111111111', '2', '赤い椅子のある室内', 'Interior with a Red Chair',
+   '室内の静物を大胆な色彩で構成した作品。赤い椅子が画面に強い緊張感を生み出します。',
+   'A still life of an interior composed with bold colors. The red chair creates a strong tension in the composition.',
+   'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
+   NULL,
+   'https://picsum.photos/seed/redchair/800/600', true, 86),
+
+  ('11111111-1111-1111-1111-111111111111', '3', '山の記憶', 'Memory of the Mountain',
+   '抽象的な筆致で山の稜線を描いた大作。制作中の下絵も併せて展示しています。',
+   'A large work depicting mountain ridges with abstract brushwork.',
+   'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3',
+   NULL,
+   'https://picsum.photos/seed/mountain/800/600', true, 42),
+
+  ('11111111-1111-1111-1111-111111111111', '99', '（準備中）特別展示', NULL,
+   '次回特別展に向けて準備中の展示です。', NULL,
+   NULL, NULL, NULL, false, 0);
+
+-- 展示（うみのいろ水族館）
+INSERT INTO exhibits
+  (museum_id, exhibit_number, title_ja, title_en, description_ja, description_en,
+   audio_url_ja, audio_url_en, image_url, is_published, play_count)
+VALUES
+  ('22222222-2222-2222-2222-222222222222', '1', 'クラゲの遊泳', 'Drifting Jellyfish',
+   'ゆらめく光の中を漂うミズクラゲ。透き通った体と規則的な拍動の仕組みを解説します。',
+   'Moon jellyfish drifting in shimmering light. Learn about their transparent bodies and rhythmic pulsing.',
+   'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
+   'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3',
+   'https://picsum.photos/seed/jellyfish/800/600', true, 203),
+
+  ('22222222-2222-2222-2222-222222222222', '2', '深海の生きものたち', 'Creatures of the Deep Sea',
+   '水深200m以深に暮らす生きものたち。光の届かない世界での適応をご覧ください。',
+   'Creatures living below 200m depth. Discover their adaptations to a world without light.',
+   'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3',
+   NULL,
+   'https://picsum.photos/seed/deepsea/800/600', true, 157),
+
+  ('22222222-2222-2222-2222-222222222222', '3', 'サンゴ礁の世界', 'The Coral Reef',
+   '色とりどりの魚が暮らすサンゴ礁。生態系のつながりを映像とともに紹介します。',
+   'A coral reef where colorful fish live, shown with its ecosystem connections.',
+   'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
+   NULL,
+   'https://picsum.photos/seed/coral/800/600', true, 91);
+
+-- 確認用
+SELECT 'museums' AS table, count(*) FROM museums
+UNION ALL SELECT 'museum_users', count(*) FROM museum_users
+UNION ALL SELECT 'exhibits', count(*) FROM exhibits;
