@@ -82,11 +82,18 @@ describe('loginSchema', () => {
 });
 
 describe('newUserSchema', () => {
-  it('rejects a short password', () => {
+  it('accepts an email + museum id (password is auto-generated)', () => {
     const r = newUserSchema.safeParse({
-      email: 'a@b.com',
-      password: 'short',
+      email: 'vendor@example.com',
       museumId: '00000000-0000-0000-0000-000000000000',
+    });
+    expect(r.success).toBe(true);
+  });
+
+  it('rejects an invalid museum id', () => {
+    const r = newUserSchema.safeParse({
+      email: 'vendor@example.com',
+      museumId: 'not-a-uuid',
     });
     expect(r.success).toBe(false);
   });

@@ -42,8 +42,16 @@ export async function POST(req: Request) {
       role: user.role,
       museumId: user.museumId,
       email: user.email,
+      mustChangePassword: user.mustChangePassword,
     });
-    const redirectTo = user.role === 'operator' ? '/operator' : '/admin';
+    // Force vendors with a freshly issued account to change the initial
+    // password before they reach any other admin page.
+    const redirectTo =
+      user.role === 'operator'
+        ? '/operator'
+        : user.mustChangePassword
+          ? '/admin/password'
+          : '/admin';
     return NextResponse.json({ role: user.role, redirectTo });
   } catch (e) {
     if (isAppError(e)) {

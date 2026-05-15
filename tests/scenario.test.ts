@@ -66,16 +66,19 @@ describe('main scenario (integration)', () => {
       logoUrl: null,
     });
 
-    await createMuseumAdmin(repo, {
+    const artIssued = await createMuseumAdmin(repo, {
       email: 'art-admin@example.com',
       password: PASSWORD,
       museumId: artMuseum.id,
     });
-    await createMuseumAdmin(repo, {
+    const aquaIssued = await createMuseumAdmin(repo, {
       email: 'aqua-admin@example.com',
       password: PASSWORD,
       museumId: aquarium.id,
     });
+    expect(artIssued.initialPassword).toBe(PASSWORD);
+    expect(artIssued.user.mustChangePassword).toBe(true);
+    expect(aquaIssued.user.mustChangePassword).toBe(true);
 
     const sessionArt = { museumId: artMuseum.id };
     const sessionAqua = { museumId: aquarium.id };
@@ -182,13 +185,11 @@ describe('main scenario (integration)', () => {
     });
     await createMuseumAdmin(repo, {
       email: 'dup@example.com',
-      password: PASSWORD,
       museumId: museum.id,
     });
     await expect(
       createMuseumAdmin(repo, {
         email: 'dup@example.com',
-        password: PASSWORD,
         museumId: museum.id,
       }),
     ).rejects.toMatchObject({ code: 'CONFLICT' });

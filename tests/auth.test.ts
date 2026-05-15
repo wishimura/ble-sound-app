@@ -26,6 +26,7 @@ describe('session JWT', () => {
       role: 'museum_admin',
       museumId: 'museum-1',
       email: 'admin@example.com',
+      mustChangePassword: false,
     });
     const decoded = await verifySession(token);
     expect(decoded).toEqual({
@@ -33,7 +34,20 @@ describe('session JWT', () => {
       role: 'museum_admin',
       museumId: 'museum-1',
       email: 'admin@example.com',
+      mustChangePassword: false,
     });
+  });
+
+  it('round-trips the must_change_password flag', async () => {
+    const token = await signSession({
+      sub: 'user-1',
+      role: 'museum_admin',
+      museumId: 'museum-1',
+      email: 'admin@example.com',
+      mustChangePassword: true,
+    });
+    const decoded = await verifySession(token);
+    expect(decoded?.mustChangePassword).toBe(true);
   });
 
   it('returns null for a tampered/invalid token', async () => {
@@ -43,6 +57,7 @@ describe('session JWT', () => {
       role: 'operator',
       museumId: null,
       email: 'op@example.com',
+      mustChangePassword: false,
     });
     expect(await verifySession(token + 'tampered')).toBeNull();
   });

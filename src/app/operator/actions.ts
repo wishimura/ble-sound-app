@@ -60,24 +60,36 @@ export async function toggleMuseumActiveAction(formData: FormData): Promise<void
   revalidatePath('/operator');
 }
 
+export interface CreateAdminResult extends ActionState {
+  initialPassword?: string;
+  email?: string;
+  museumName?: string;
+}
+
 export async function createAdminAction(
-  _prev: ActionState,
+  _prev: CreateAdminResult,
   formData: FormData,
-): Promise<ActionState> {
+): Promise<CreateAdminResult> {
   await requireOperator();
   const parsed = newUserSchema.safeParse({
     email: formData.get('email'),
-    password: formData.get('password'),
     museumId: formData.get('museumId'),
   });
   if (!parsed.success) {
     return { error: firstZodMessage(parsed.error) };
   }
   try {
-    await createMuseumAdmin(getRepository(), parsed.data);
+    const repo = getRepository();
+    const { user, initialPassword } = await createMuseumAdmin(repo, parsed.data);
+    const museum = await repo.getMuseum(parsed.data.museumId);
+    revalidatePath('/operator/admins');
+    return {
+      ok: true,
+      initialPassword,
+      email: user.email,
+      museumName: museum?.name,
+    };
   } catch (e) {
     return { error: describeError(e) };
   }
-  revalidatePath('/operator/admins');
-  return { ok: true };
 }

@@ -65,6 +65,15 @@ export default function ExhibitForm({ exhibit }: { exhibit?: Exhibit }) {
         />
       </Field>
 
+      <div className="rounded-xl border border-line bg-canvas p-4">
+        <p className="text-sm font-medium text-ink">音声の登録方法</p>
+        <p className="mt-1 text-xs text-ink-muted">
+          各言語で「音声URL」を登録すると、その音声ファイルが再生されます。
+          URL が空のまま「読み上げテキスト」を登録すると、ブラウザの音声合成で
+          AI が読み上げます（端末によって声質が変わります）。両方空ならその言語の音声は表示されません。
+        </p>
+      </div>
+
       <div className="grid gap-4 sm:grid-cols-2">
         <Field label="音声URL（日本語）" htmlFor="audioUrlJa" hint="https:// で始まる音声ファイル">
           <input
@@ -85,6 +94,28 @@ export default function ExhibitForm({ exhibit }: { exhibit?: Exhibit }) {
           />
         </Field>
       </div>
+
+      <Field
+        label="読み上げテキスト（日本語）"
+        htmlFor="narrationJa"
+        hint="音声URLが空のとき、このテキストをAIが読み上げます"
+      >
+        <textarea
+          id="narrationJa"
+          name="narrationJa"
+          defaultValue={exhibit?.narrationJa ?? ''}
+          className={textareaClass}
+        />
+      </Field>
+
+      <Field label="読み上げテキスト（英語）" htmlFor="narrationEn">
+        <textarea
+          id="narrationEn"
+          name="narrationEn"
+          defaultValue={exhibit?.narrationEn ?? ''}
+          className={textareaClass}
+        />
+      </Field>
 
       <Field label="展示画像URL" htmlFor="imageUrl" hint="https:// で始まる画像URL">
         <input

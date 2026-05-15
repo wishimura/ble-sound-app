@@ -83,6 +83,8 @@ export async function setAdminExhibitPublished(
     titleEn: exhibit.titleEn,
     descriptionJa: exhibit.descriptionJa,
     descriptionEn: exhibit.descriptionEn,
+    narrationJa: exhibit.narrationJa,
+    narrationEn: exhibit.narrationEn,
     audioUrlJa: exhibit.audioUrlJa,
     audioUrlEn: exhibit.audioUrlEn,
     imageUrl: exhibit.imageUrl,

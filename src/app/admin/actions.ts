@@ -30,6 +30,8 @@ function readExhibitForm(formData: FormData) {
     titleEn: formData.get('titleEn'),
     descriptionJa: formData.get('descriptionJa') ?? '',
     descriptionEn: formData.get('descriptionEn'),
+    narrationJa: formData.get('narrationJa'),
+    narrationEn: formData.get('narrationEn'),
     audioUrlJa: formData.get('audioUrlJa'),
     audioUrlEn: formData.get('audioUrlEn'),
     imageUrl: formData.get('imageUrl'),

@@ -59,18 +59,21 @@ async function main() {
       email: 'operator@example.com',
       passwordHash,
       role: 'operator',
+      mustChangePassword: false,
     },
     {
       museumId: artMuseum.id,
       email: 'art-admin@example.com',
       passwordHash,
       role: 'museum_admin',
+      mustChangePassword: false,
     },
     {
       museumId: aquarium.id,
       email: 'aqua-admin@example.com',
       passwordHash,
       role: 'museum_admin',
+      mustChangePassword: false,
     },
   ]);
 
@@ -107,13 +110,18 @@ async function main() {
       playCount: 86,
     },
     {
+      // AI読み上げのデモ: 音声URLは未設定、ナレーション原稿のみ登録
       museumId: artMuseum.id,
       exhibitNumber: '3',
       titleJa: '山の記憶',
       titleEn: 'Memory of the Mountain',
       descriptionJa: '抽象的な筆致で山の稜線を描いた大作。制作中の下絵も併せて展示しています。',
       descriptionEn: 'A large work depicting mountain ridges with abstract brushwork.',
-      audioUrlJa: AUDIO_JA,
+      narrationJa:
+        'こちらの作品は、抽象的な筆致で山の稜線を描いた大作です。ぜひ近くで筆使いをご覧ください。',
+      narrationEn:
+        'This large work depicts mountain ridges with abstract brushwork. Please take a closer look at the brush strokes.',
+      audioUrlJa: null,
       audioUrlEn: null,
       imageUrl: '/samples/art-3.svg',
       isPublished: true,

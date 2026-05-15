@@ -42,12 +42,22 @@ export const exhibitNumberSchema = z
   .min(1, '展示番号を入力してください')
   .max(32, '展示番号が長すぎます');
 
+const optionalNarration = z
+  .preprocess(
+    (v) => (typeof v === 'string' && v.trim() === '' ? null : v),
+    z.string().trim().max(8000).nullable(),
+  )
+  .nullable()
+  .default(null);
+
 export const exhibitInputSchema = z.object({
   exhibitNumber: exhibitNumberSchema,
   titleJa: z.string().trim().min(1, '日本語タイトルは必須です').max(200),
   titleEn: optionalText,
   descriptionJa: z.string().trim().max(8000).default(''),
   descriptionEn: optionalText,
+  narrationJa: optionalNarration,
+  narrationEn: optionalNarration,
   audioUrlJa: optionalUrl,
   audioUrlEn: optionalUrl,
   imageUrl: optionalUrl,
@@ -57,6 +67,24 @@ export const exhibitInputSchema = z.object({
   ),
 });
 
+export const passwordChangeSchema = z
+  .object({
+    currentPassword: z.string().min(1, '現在のパスワードを入力してください'),
+    newPassword: z
+      .string()
+      .min(8, '新しいパスワードは8文字以上にしてください')
+      .max(128),
+    confirmPassword: z.string().min(1, '確認のため再入力してください'),
+  })
+  .refine((v) => v.newPassword === v.confirmPassword, {
+    path: ['confirmPassword'],
+    message: '新しいパスワードが一致しません',
+  })
+  .refine((v) => v.newPassword !== v.currentPassword, {
+    path: ['newPassword'],
+    message: '現在のパスワードと異なるものにしてください',
+  });
+
 export const museumInputSchema = z.object({
   name: z.string().trim().min(1, '施設名は必須です').max(200),
   description: optionalText,
@@ -64,9 +92,13 @@ export const museumInputSchema = z.object({
   logoUrl: optionalUrl,
 });
 
+/**
+ * Operator-side schema for issuing a new vendor (museum admin) account.
+ * The system always auto-generates the initial password — the operator only
+ * supplies the email and the assigned museum.
+ */
 export const newUserSchema = z.object({
   email: z.string().trim().toLowerCase().email('メールアドレスの形式が正しくありません'),
-  password: z.string().min(8, 'パスワードは8文字以上にしてください').max(128),
   museumId: z.string().uuid('施設を選択してください'),
 });
 

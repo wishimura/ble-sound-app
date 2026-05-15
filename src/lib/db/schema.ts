@@ -35,6 +35,9 @@ export const museumUsers = pgTable('museum_users', {
   email: text('email').notNull().unique(),
   passwordHash: text('password_hash').notNull(),
   role: userRoleEnum('role').notNull(),
+  // True for newly issued vendor (museum_admin) accounts. They must change
+  // their initial password before they can use the rest of the admin pages.
+  mustChangePassword: boolean('must_change_password').notNull().default(true),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
 });
 
@@ -50,6 +53,11 @@ export const exhibits = pgTable(
     titleEn: text('title_en'),
     descriptionJa: text('description_ja').notNull().default(''),
     descriptionEn: text('description_en'),
+    // Optional spoken-narration scripts. When `audio_url_*` is null but
+    // `narration_*` is set, the visitor app uses the browser's speech
+    // synthesis to read the script aloud.
+    narrationJa: text('narration_ja'),
+    narrationEn: text('narration_en'),
     audioUrlJa: text('audio_url_ja'),
     audioUrlEn: text('audio_url_en'),
     imageUrl: text('image_url'),

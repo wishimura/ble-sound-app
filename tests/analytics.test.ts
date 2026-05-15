@@ -13,6 +13,8 @@ function exhibit(partial: Partial<Exhibit>): Exhibit {
     titleEn: null,
     descriptionJa: '',
     descriptionEn: null,
+    narrationJa: null,
+    narrationEn: null,
     audioUrlJa: null,
     audioUrlEn: null,
     imageUrl: null,

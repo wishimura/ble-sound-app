@@ -157,6 +157,7 @@ export class MemoryRepository implements Repository {
       email,
       passwordHash: input.passwordHash,
       role: input.role,
+      mustChangePassword: input.mustChangePassword ?? true,
       createdAt: new Date(),
     };
     this.usersById.set(user.id, user);
@@ -167,6 +168,13 @@ export class MemoryRepository implements Repository {
     return [...this.exhibitsById.values()].sort(
       (a, b) => b.playCount - a.playCount,
     );
+  }
+
+  async updatePassword(userId: string, passwordHash: string, mustChange: boolean) {
+    const user = this.usersById.get(userId);
+    if (!user) throw new Error('user not found');
+    user.passwordHash = passwordHash;
+    user.mustChangePassword = mustChange;
   }
 
   private sortByName(list: Museum[]) {

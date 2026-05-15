@@ -1,6 +1,7 @@
 import { conflict, notFound } from '@/lib/errors';
 import { rankPopularExhibits, summarizeExhibits } from '@/lib/analytics';
 import { hashPassword } from '@/lib/auth/password';
+import { generateInitialPassword } from '@/lib/auth/initial-password';
 import type { MuseumType, Repository } from '@/lib/repository/types';
 import type { MuseumInputValues } from '@/lib/validation';
 
@@ -37,22 +38,33 @@ export async function listMuseumAdmins(repo: Repository) {
   }));
 }
 
-/** Issues a new museum-admin account bound to a single museum. */
+/**
+ * Issues a new vendor (museum-admin) account bound to a single museum.
+ *
+ * The initial password is auto-generated and returned in plaintext exactly
+ * once so the operator can copy it and send it to the vendor out-of-band.
+ * The `mustChangePassword` flag is set so the vendor is forced to choose
+ * their own password on first login.
+ */
 export async function createMuseumAdmin(
   repo: Repository,
-  input: { email: string; password: string; museumId: string },
+  input: { email: string; museumId: string; password?: string },
 ) {
   const museum = await repo.getMuseum(input.museumId);
   if (!museum) throw notFound('施設が見つかりません');
   const existing = await repo.getUserByEmail(input.email);
   if (existing) throw conflict('このメールアドレスは既に登録されています');
-  const passwordHash = await hashPassword(input.password);
-  return repo.createUser({
+
+  const initialPassword = input.password ?? generateInitialPassword();
+  const passwordHash = await hashPassword(initialPassword);
+  const user = await repo.createUser({
     museumId: input.museumId,
     email: input.email,
     passwordHash,
     role: 'museum_admin',
+    mustChangePassword: true,
   });
+  return { user, initialPassword };
 }
 
 export async function getGlobalAnalytics(repo: Repository) {

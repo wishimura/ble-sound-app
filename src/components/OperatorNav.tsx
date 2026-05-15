@@ -6,8 +6,9 @@ import LogoutButton from '@/components/LogoutButton';
 
 const links = [
   { href: '/operator', label: '施設一覧', exact: true },
-  { href: '/operator/admins', label: '管理者管理', exact: false },
+  { href: '/operator/admins', label: '事業者管理', exact: false },
   { href: '/operator/analytics', label: '全体分析', exact: false },
+  { href: '/operator/password', label: 'パスワード', exact: false },
 ];
 
 export default function OperatorNav() {

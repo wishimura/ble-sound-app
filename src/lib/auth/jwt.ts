@@ -6,6 +6,7 @@ export interface SessionPayload {
   role: UserRole;
   museumId: string | null;
   email: string;
+  mustChangePassword: boolean;
 }
 
 const ALG = 'HS256';
@@ -44,6 +45,7 @@ export async function verifySession(token: string): Promise<SessionPayload | nul
         role: payload.role,
         museumId: (payload.museumId as string | null) ?? null,
         email: payload.email,
+        mustChangePassword: payload.mustChangePassword === true,
       };
     }
     return null;

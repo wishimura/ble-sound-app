@@ -6,13 +6,16 @@ import { SESSION_COOKIE, verifySession } from '@/lib/auth/jwt';
  * Route protection for the two authenticated areas.
  *  - /admin/*    requires role `museum_admin`
  *  - /operator/* requires role `operator`
- * Login pages are always public.
+ * Login pages are always public. If a vendor still has the
+ * `mustChangePassword` flag set, every admin page except `/admin/password`
+ * forwards them to the password-change form.
  */
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
   const isAdminLogin = pathname === '/admin/login';
   const isOperatorLogin = pathname === '/operator/login';
+  const isAdminPasswordPage = pathname === '/admin/password';
   const isAdminArea = pathname.startsWith('/admin') && !isAdminLogin;
   const isOperatorArea = pathname.startsWith('/operator') && !isOperatorLogin;
 
@@ -26,6 +29,9 @@ export async function middleware(req: NextRequest) {
   if (isAdminArea) {
     if (!session || session.role !== 'museum_admin') {
       return redirectTo(req, '/admin/login');
+    }
+    if (session.mustChangePassword && !isAdminPasswordPage) {
+      return redirectTo(req, '/admin/password');
     }
   }
 

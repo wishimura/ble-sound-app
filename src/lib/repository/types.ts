@@ -18,6 +18,7 @@ export interface MuseumUser {
   email: string;
   passwordHash: string;
   role: UserRole;
+  mustChangePassword: boolean;
   createdAt: Date;
 }
 
@@ -29,6 +30,8 @@ export interface Exhibit {
   titleEn: string | null;
   descriptionJa: string;
   descriptionEn: string | null;
+  narrationJa: string | null;
+  narrationEn: string | null;
   audioUrlJa: string | null;
   audioUrlEn: string | null;
   imageUrl: string | null;
@@ -53,6 +56,7 @@ export interface NewMuseumUser {
   email: string;
   passwordHash: string;
   role: UserRole;
+  mustChangePassword?: boolean;
 }
 
 export interface ExhibitInput {
@@ -61,6 +65,8 @@ export interface ExhibitInput {
   titleEn: string | null;
   descriptionJa: string;
   descriptionEn: string | null;
+  narrationJa: string | null;
+  narrationEn: string | null;
   audioUrlJa: string | null;
   audioUrlEn: string | null;
   imageUrl: string | null;
@@ -101,4 +107,7 @@ export interface Repository {
   listUsers(): Promise<MuseumUser[]>;
   createUser(input: NewMuseumUser): Promise<MuseumUser>;
   listAllExhibits(): Promise<Exhibit[]>;
+
+  // ---- account ----
+  updatePassword(userId: string, passwordHash: string, mustChange: boolean): Promise<void>;
 }

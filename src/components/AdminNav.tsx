@@ -8,6 +8,7 @@ const links = [
   { href: '/admin', label: 'ダッシュボード', exact: true },
   { href: '/admin/exhibits', label: '展示一覧', exact: false },
   { href: '/admin/museum', label: '施設設定', exact: false },
+  { href: '/admin/password', label: 'パスワード', exact: false },
 ];
 
 export default function AdminNav({ museumName }: { museumName: string }) {

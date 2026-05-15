@@ -143,4 +143,11 @@ export class NeonRepository implements Repository {
   async listAllExhibits() {
     return this.db.select().from(exhibits).orderBy(desc(exhibits.playCount));
   }
+
+  async updatePassword(userId: string, passwordHash: string, mustChange: boolean) {
+    await this.db
+      .update(museumUsers)
+      .set({ passwordHash, mustChangePassword: mustChange })
+      .where(eq(museumUsers.id, userId));
+  }
 }

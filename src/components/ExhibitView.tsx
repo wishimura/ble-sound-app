@@ -4,6 +4,7 @@ import Image from 'next/image';
 import { useState } from 'react';
 import AudioPlayer from '@/components/AudioPlayer';
 import FavoriteButton from '@/components/FavoriteButton';
+import TTSPlayer from '@/components/TTSPlayer';
 import { Badge } from '@/components/ui';
 import { languageLabel } from '@/lib/i18n';
 import type { Exhibit, Language } from '@/lib/repository/types';
@@ -17,6 +18,8 @@ interface ExhibitViewProps {
     | 'titleEn'
     | 'descriptionJa'
     | 'descriptionEn'
+    | 'narrationJa'
+    | 'narrationEn'
     | 'audioUrlJa'
     | 'audioUrlEn'
     | 'imageUrl'
@@ -35,6 +38,7 @@ export default function ExhibitView({ exhibit, museumName, museumId }: ExhibitVi
       ? (exhibit.descriptionEn ?? exhibit.descriptionJa)
       : exhibit.descriptionJa;
   const audioUrl = lang === 'en' ? exhibit.audioUrlEn : exhibit.audioUrlJa;
+  const narration = lang === 'en' ? exhibit.narrationEn : exhibit.narrationJa;
 
   return (
     <article className="space-y-5">
@@ -77,6 +81,14 @@ export default function ExhibitView({ exhibit, museumName, museumId }: ExhibitVi
       {audioUrl ? (
         <AudioPlayer
           src={audioUrl}
+          exhibitId={exhibit.id}
+          title={title}
+          museumName={museumName}
+        />
+      ) : narration ? (
+        <TTSPlayer
+          text={narration}
+          lang={lang}
           exhibitId={exhibit.id}
           title={title}
           museumName={museumName}
