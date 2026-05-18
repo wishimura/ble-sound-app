@@ -79,7 +79,7 @@ export default function ExhibitForm({ exhibit }: { exhibit?: Exhibit }) {
           <input
             id="audioUrlJa"
             name="audioUrlJa"
-            type="url"
+            type="text"
             defaultValue={exhibit?.audioUrlJa ?? ''}
             className={inputClass}
           />
@@ -88,7 +88,7 @@ export default function ExhibitForm({ exhibit }: { exhibit?: Exhibit }) {
           <input
             id="audioUrlEn"
             name="audioUrlEn"
-            type="url"
+            type="text"
             defaultValue={exhibit?.audioUrlEn ?? ''}
             className={inputClass}
           />
@@ -121,7 +121,7 @@ export default function ExhibitForm({ exhibit }: { exhibit?: Exhibit }) {
         <input
           id="imageUrl"
           name="imageUrl"
-          type="url"
+          type="text"
           defaultValue={exhibit?.imageUrl ?? ''}
           className={inputClass}
         />

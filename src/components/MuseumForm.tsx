@@ -70,7 +70,7 @@ export default function MuseumForm({
         <input
           id="logoUrl"
           name="logoUrl"
-          type="url"
+          type="text"
           defaultValue={museum?.logoUrl ?? ''}
           className={inputClass}
         />
