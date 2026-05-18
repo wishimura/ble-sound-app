@@ -23,6 +23,24 @@ export default async function AdminLoginPage() {
       <Card className="p-6">
         <LoginForm role="museum_admin" />
       </Card>
+
+      <div className="mt-4 rounded-xl border border-accent-soft bg-accent-soft/50 p-4 text-sm text-ink-soft">
+        <p className="font-semibold text-ink">テスト用ログイン情報</p>
+        <dl className="mt-2 space-y-1 font-mono text-xs">
+          <div className="flex gap-2">
+            <dt className="w-28 text-ink-muted">美術館（美術館）</dt>
+            <dd>art-admin@example.com</dd>
+          </div>
+          <div className="flex gap-2">
+            <dt className="w-28 text-ink-muted">美術館（水族館）</dt>
+            <dd>aqua-admin@example.com</dd>
+          </div>
+          <div className="flex gap-2">
+            <dt className="w-28 text-ink-muted">パスワード</dt>
+            <dd>password1234</dd>
+          </div>
+        </dl>
+      </div>
     </main>
   );
 }

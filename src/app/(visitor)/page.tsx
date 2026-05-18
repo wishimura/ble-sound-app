@@ -43,6 +43,18 @@ export default function HomePage() {
             お気に入りを見る
           </Link>
         </div>
+
+        <div className="mt-10 border-t border-line pt-6 text-center text-xs text-ink-muted">
+          <p>テスト用リンク</p>
+          <div className="mt-2 flex justify-center gap-4">
+            <Link href="/admin/login" className="text-accent-dark underline">
+              管理画面はこちら
+            </Link>
+            <Link href="/operator/login" className="text-accent-dark underline">
+              運営画面はこちら
+            </Link>
+          </div>
+        </div>
       </div>
     </main>
   );
