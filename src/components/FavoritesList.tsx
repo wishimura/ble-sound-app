@@ -10,14 +10,17 @@ import {
 } from '@/lib/favorites';
 import { Card } from '@/components/ui';
 
-export default function FavoritesList() {
+export default function FavoritesList({ museumId }: { museumId?: string } = {}) {
   const [items, setItems] = useState<FavoriteItem[] | null>(null);
 
   useEffect(() => {
-    const sync = () => setItems(getFavorites());
+    const sync = () => {
+      const all = getFavorites();
+      setItems(museumId ? all.filter((f) => f.museumId === museumId) : all);
+    };
     sync();
     return subscribeFavorites(sync);
-  }, []);
+  }, [museumId]);
 
   if (items === null) {
     return <p className="text-sm text-ink-muted">読み込み中...</p>;

@@ -85,6 +85,7 @@ export interface Repository {
   // ---- visitor ----
   listActiveMuseums(): Promise<Museum[]>;
   getMuseum(id: string): Promise<Museum | null>;
+  listPublishedExhibits(museumId: string): Promise<Exhibit[]>;
   getPublishedExhibit(museumId: string, exhibitNumber: string): Promise<Exhibit | null>;
   getExhibitById(id: string): Promise<Exhibit | null>;
   incrementPlayCount(exhibitId: string): Promise<void>;

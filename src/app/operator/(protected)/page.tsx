@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { toggleMuseumActiveAction } from '@/app/operator/actions';
+/* eslint-disable @next/next/no-img-element */
 import { Badge, Card, PageTitle, btn } from '@/components/ui';
 import { requireOperator } from '@/lib/auth/session';
 import { museumTypeLabel } from '@/lib/i18n';
@@ -28,6 +29,19 @@ export default async function OperatorMuseumsPage() {
           {museums.map((m) => (
             <li key={m.id}>
               <Card className="flex flex-wrap items-center gap-3 p-4">
+                <div className="flex h-12 w-12 flex-none items-center justify-center overflow-hidden rounded-xl bg-accent-soft">
+                  {m.logoUrl ? (
+                    <img
+                      src={m.logoUrl}
+                      alt=""
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <span className="text-base font-semibold text-accent-dark">
+                      {m.name.slice(0, 1)}
+                    </span>
+                  )}
+                </div>
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2">
                     <Badge tone="muted">{museumTypeLabel[m.type]}</Badge>
@@ -42,20 +56,28 @@ export default async function OperatorMuseumsPage() {
                     <p className="truncate text-sm text-ink-muted">{m.description}</p>
                   ) : null}
                 </div>
-                <form action={toggleMuseumActiveAction}>
-                  <input type="hidden" name="id" value={m.id} />
-                  <input
-                    type="hidden"
-                    name="active"
-                    value={(!m.isActive).toString()}
-                  />
-                  <button
-                    type="submit"
-                    className={btn(m.isActive ? 'danger' : 'secondary', 'text-xs')}
+                <div className="flex items-center gap-2">
+                  <Link
+                    href={`/operator/museums/${m.id}`}
+                    className={btn('secondary', 'text-xs')}
                   >
-                    {m.isActive ? '施設を停止' : '施設を再開'}
-                  </button>
-                </form>
+                    管理
+                  </Link>
+                  <form action={toggleMuseumActiveAction}>
+                    <input type="hidden" name="id" value={m.id} />
+                    <input
+                      type="hidden"
+                      name="active"
+                      value={(!m.isActive).toString()}
+                    />
+                    <button
+                      type="submit"
+                      className={btn(m.isActive ? 'danger' : 'ghost', 'text-xs')}
+                    >
+                      {m.isActive ? '停止' : '再開'}
+                    </button>
+                  </form>
+                </div>
               </Card>
             </li>
           ))}

@@ -2,19 +2,37 @@
 
 import Link from 'next/link';
 import { useActionState } from 'react';
-import { saveExhibitAction, type ActionState } from '@/app/admin/actions';
 import { Alert, Field, btn, inputClass } from '@/components/ui';
 import type { Exhibit } from '@/lib/repository/types';
 
-const initialState: ActionState = {};
+interface ActionState {
+  error?: string;
+  ok?: boolean;
+}
 
-export default function ExhibitForm({ exhibit }: { exhibit?: Exhibit }) {
-  const [state, formAction, pending] = useActionState(saveExhibitAction, initialState);
+type ExhibitAction = (prev: ActionState, formData: FormData) => Promise<ActionState>;
+
+export default function ExhibitForm({
+  exhibit,
+  action,
+  cancelHref,
+  museumId,
+}: {
+  exhibit?: Exhibit;
+  action: ExhibitAction;
+  cancelHref: string;
+  /** Operator-scoped forms emit this as a hidden field so the action knows
+   * which museum to write to. Admin (museum_admin) forms omit it because the
+   * museum is derived from the session. */
+  museumId?: string;
+}) {
+  const [state, formAction, pending] = useActionState<ActionState, FormData>(action, {});
   const textareaClass = `${inputClass} min-h-28 resize-y`;
 
   return (
     <form action={formAction} className="space-y-5">
       {state.error ? <Alert>{state.error}</Alert> : null}
+      {museumId ? <input type="hidden" name="museumId" value={museumId} /> : null}
       {exhibit ? <input type="hidden" name="id" value={exhibit.id} /> : null}
 
       <Field label="展示番号" htmlFor="exhibitNumber" hint="施設内で重複しない番号">
@@ -141,7 +159,7 @@ export default function ExhibitForm({ exhibit }: { exhibit?: Exhibit }) {
         <button type="submit" disabled={pending} className={btn('primary')}>
           {pending ? '保存中...' : '保存する'}
         </button>
-        <Link href="/admin/exhibits" className={btn('ghost')}>
+        <Link href={cancelHref} className={btn('ghost')}>
           キャンセル
         </Link>
       </div>

@@ -14,6 +14,16 @@ export async function getMuseumForVisitor(repo: Repository, museumId: string) {
   return museum;
 }
 
+/** All published exhibits for a museum, used to render the visitor grid. */
+export async function listPublishedExhibitsForVisitor(
+  repo: Repository,
+  museumId: string,
+) {
+  const museum = await repo.getMuseum(museumId);
+  if (!museum || !museum.isActive) return [];
+  return repo.listPublishedExhibits(museumId);
+}
+
 /**
  * Looks up a published exhibit by its (museum-scoped) number.
  * Returns null when nothing matches so the page can show a friendly message.

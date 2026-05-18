@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import { deleteExhibitAction, saveExhibitAction } from '@/app/admin/actions';
 import DeleteExhibitButton from '@/components/DeleteExhibitButton';
 import ExhibitForm from '@/components/ExhibitForm';
 import { Card, PageTitle } from '@/components/ui';
@@ -39,7 +40,11 @@ export default async function EditExhibitPage({
       </div>
 
       <Card className="p-5">
-        <ExhibitForm exhibit={exhibit} />
+        <ExhibitForm
+          exhibit={exhibit}
+          action={saveExhibitAction}
+          cancelHref="/admin/exhibits"
+        />
       </Card>
 
       <Card className="flex flex-wrap items-center justify-between gap-3 p-5">
@@ -47,7 +52,7 @@ export default async function EditExhibitPage({
           <p className="font-medium text-ink">この展示を削除</p>
           <p className="text-sm text-ink-muted">削除すると元に戻せません。</p>
         </div>
-        <DeleteExhibitButton exhibitId={exhibit.id} />
+        <DeleteExhibitButton exhibitId={exhibit.id} action={deleteExhibitAction} />
       </Card>
     </div>
   );

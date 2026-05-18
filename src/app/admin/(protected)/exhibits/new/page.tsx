@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { saveExhibitAction } from '@/app/admin/actions';
 import ExhibitForm from '@/components/ExhibitForm';
 import { Card, PageTitle } from '@/components/ui';
 import { requireMuseumAdmin } from '@/lib/auth/session';
@@ -18,7 +19,7 @@ export default async function NewExhibitPage() {
         </div>
       </div>
       <Card className="p-5">
-        <ExhibitForm />
+        <ExhibitForm action={saveExhibitAction} cancelHref="/admin/exhibits" />
       </Card>
     </div>
   );

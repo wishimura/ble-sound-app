@@ -28,6 +28,12 @@ export class MemoryRepository implements Repository {
     return this.museumsById.get(id) ?? null;
   }
 
+  async listPublishedExhibits(museumId: string) {
+    return [...this.exhibitsById.values()]
+      .filter((e) => e.museumId === museumId && e.isPublished)
+      .sort((a, b) => a.exhibitNumber.localeCompare(b.exhibitNumber));
+  }
+
   async getPublishedExhibit(museumId: string, exhibitNumber: string) {
     return (
       [...this.exhibitsById.values()].find(
