@@ -1,6 +1,7 @@
 'use client';
 
 import { useActionState } from 'react';
+import FileUploadButton from '@/components/FileUploadButton';
 import { Alert, Field, btn, inputClass } from '@/components/ui';
 import { museumTypeLabel } from '@/lib/i18n';
 import type { Museum } from '@/lib/repository/types';
@@ -66,7 +67,7 @@ export default function MuseumForm({
         />
       </Field>
 
-      <Field label="ロゴ画像URL" htmlFor="logoUrl" hint="https:// で始まる画像URL">
+      <Field label="ロゴ画像" htmlFor="logoUrl" hint="jpeg / png / webp 等。ファイルから直接アップロードできます">
         <input
           id="logoUrl"
           name="logoUrl"
@@ -74,6 +75,7 @@ export default function MuseumForm({
           defaultValue={museum?.logoUrl ?? ''}
           className={inputClass}
         />
+        <FileUploadButton targetInputId="logoUrl" purpose="image" />
       </Field>
 
       <button type="submit" disabled={pending} className={btn('primary')}>

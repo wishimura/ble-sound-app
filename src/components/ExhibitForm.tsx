@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useActionState } from 'react';
+import FileUploadButton from '@/components/FileUploadButton';
 import { Alert, Field, btn, inputClass } from '@/components/ui';
 import type { Exhibit } from '@/lib/repository/types';
 
@@ -93,7 +94,7 @@ export default function ExhibitForm({
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2">
-        <Field label="音声URL（日本語）" htmlFor="audioUrlJa" hint="https:// で始まる音声ファイル">
+        <Field label="音声（日本語）" htmlFor="audioUrlJa" hint="mp3 / wav 等。ファイルから直接アップロードできます">
           <input
             id="audioUrlJa"
             name="audioUrlJa"
@@ -101,8 +102,9 @@ export default function ExhibitForm({
             defaultValue={exhibit?.audioUrlJa ?? ''}
             className={inputClass}
           />
+          <FileUploadButton targetInputId="audioUrlJa" purpose="audio" />
         </Field>
-        <Field label="音声URL（英語）" htmlFor="audioUrlEn">
+        <Field label="音声（英語）" htmlFor="audioUrlEn">
           <input
             id="audioUrlEn"
             name="audioUrlEn"
@@ -110,6 +112,7 @@ export default function ExhibitForm({
             defaultValue={exhibit?.audioUrlEn ?? ''}
             className={inputClass}
           />
+          <FileUploadButton targetInputId="audioUrlEn" purpose="audio" />
         </Field>
       </div>
 
@@ -135,7 +138,7 @@ export default function ExhibitForm({
         />
       </Field>
 
-      <Field label="展示画像URL" htmlFor="imageUrl" hint="https:// で始まる画像URL">
+      <Field label="展示画像" htmlFor="imageUrl" hint="jpeg / png / webp 等。ファイルから直接アップロードできます">
         <input
           id="imageUrl"
           name="imageUrl"
@@ -143,6 +146,7 @@ export default function ExhibitForm({
           defaultValue={exhibit?.imageUrl ?? ''}
           className={inputClass}
         />
+        <FileUploadButton targetInputId="imageUrl" purpose="image" />
       </Field>
 
       <label className="flex items-center gap-3 rounded-xl border border-line bg-canvas px-4 py-3">
