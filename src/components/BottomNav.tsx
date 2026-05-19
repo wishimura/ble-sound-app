@@ -42,44 +42,53 @@ const ICONS = {
   ),
 } as const;
 
-const genericItems: Item[] = [
-  { href: '/', label: 'ホーム', icon: ICONS.home, match: (p) => p === '/' },
-  {
-    href: '/museums',
-    label: '施設',
-    icon: ICONS.museums,
-    match: (p) => p === '/museums',
-  },
-  {
-    href: '/favorites',
-    label: 'お気に入り',
-    icon: ICONS.heart,
-    match: (p) => p === '/favorites',
-  },
-];
+// Keep in sync with RESERVED_SLUGS in src/lib/validation.ts. The BottomNav
+// runs on the client without server data, so it needs its own copy.
+const RESERVED_FIRST_SEGMENTS = new Set([
+  'admin',
+  'api',
+  'operator',
+  'm',
+  '_next',
+  'samples',
+  'favorites',
+  'museums',
+]);
 
-function museumItems(museumId: string): Item[] {
+function museumItems(prefix: string): Item[] {
   return [
     {
-      href: `/m/${museumId}`,
+      href: prefix,
       label: '展示一覧',
       icon: ICONS.grid,
-      match: (p) =>
-        p === `/m/${museumId}` || p.startsWith(`/m/${museumId}/e/`),
+      match: (p) => p === prefix || p.startsWith(`${prefix}/e/`),
     },
     {
-      href: `/m/${museumId}/favorites`,
+      href: `${prefix}/favorites`,
       label: 'お気に入り',
       icon: ICONS.heart,
-      match: (p) => p === `/m/${museumId}/favorites`,
+      match: (p) => p === `${prefix}/favorites`,
     },
   ];
 }
 
 export default function BottomNav() {
   const pathname = usePathname();
-  const museumMatch = pathname.match(/^\/m\/([^/]+)/);
-  const items = museumMatch ? museumItems(museumMatch[1]) : genericItems;
+
+  // Match either the legacy /m/[id] or the new /[slug] visitor pages.
+  let prefix: string | null = null;
+  const legacy = pathname.match(/^\/m\/([^/]+)/);
+  if (legacy) {
+    prefix = `/m/${legacy[1]}`;
+  } else {
+    const first = pathname.split('/').filter(Boolean)[0];
+    if (first && !RESERVED_FIRST_SEGMENTS.has(first)) {
+      prefix = `/${first}`;
+    }
+  }
+
+  if (!prefix) return null;
+  const items = museumItems(prefix);
 
   return (
     <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-surface/95 backdrop-blur">

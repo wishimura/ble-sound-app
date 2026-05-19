@@ -23,6 +23,9 @@ export interface ActionState {
 
 function describeError(e: unknown): string {
   if (isAppError(e)) return e.message;
+  if (e instanceof Error && /slug/i.test(e.message)) {
+    return 'そのURL識別子は既に使われています';
+  }
   console.error('operator action error', e);
   return '処理に失敗しました。時間をおいて再度お試しください';
 }
@@ -33,6 +36,7 @@ export async function createMuseumAction(
 ): Promise<ActionState> {
   await requireOperator();
   const parsed = museumInputSchema.safeParse({
+    slug: formData.get('slug'),
     name: formData.get('name'),
     description: formData.get('description'),
     type: formData.get('type'),

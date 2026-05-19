@@ -35,6 +35,7 @@ async function main() {
     .insert(museums)
     .values([
       {
+        slug: 'minato-art',
         name: '湊町近代美術館',
         description:
           '近現代の絵画・彫刻を中心に展示する美術館。落ち着いた空間で名作をお楽しみいただけます。',
@@ -43,6 +44,7 @@ async function main() {
         isActive: true,
       },
       {
+        slug: 'uminoiro',
         name: 'うみのいろ水族館',
         description: '深海から沿岸まで、海の生きものたちの多様な世界をご紹介します。',
         type: 'aquarium',

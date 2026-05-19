@@ -4,7 +4,7 @@ import { Badge, Card } from '@/components/ui';
 import type { Exhibit } from '@/lib/repository/types';
 
 interface Props {
-  museumId: string;
+  museumSlug: string;
   exhibits: Pick<Exhibit, 'id' | 'exhibitNumber' | 'titleJa' | 'imageUrl'>[];
 }
 
@@ -12,7 +12,7 @@ interface Props {
  * Visitor-facing grid of all published exhibits for a museum. Replaces the
  * old number-keypad flow — visitors browse and tap an exhibit directly.
  */
-export default function ExhibitGrid({ museumId, exhibits }: Props) {
+export default function ExhibitGrid({ museumSlug, exhibits }: Props) {
   if (exhibits.length === 0) {
     return (
       <Card className="p-8 text-center text-sm text-ink-muted">
@@ -26,7 +26,7 @@ export default function ExhibitGrid({ museumId, exhibits }: Props) {
       {exhibits.map((e) => (
         <li key={e.id}>
           <Link
-            href={`/m/${museumId}/e/${encodeURIComponent(e.exhibitNumber)}`}
+            href={`/${museumSlug}/e/${encodeURIComponent(e.exhibitNumber)}`}
             className="group block"
           >
             <div className="relative aspect-square overflow-hidden rounded-xl border border-line bg-canvas">

@@ -14,6 +14,13 @@ export async function getMuseumForVisitor(repo: Repository, museumId: string) {
   return museum;
 }
 
+/** Slug-based lookup for the public `/[slug]` URL. */
+export async function getMuseumBySlugForVisitor(repo: Repository, slug: string) {
+  const museum = await repo.getMuseumBySlug(slug);
+  if (!museum || !museum.isActive) throw notFound('施設が見つかりません');
+  return museum;
+}
+
 /** All published exhibits for a museum, used to render the visitor grid. */
 export async function listPublishedExhibitsForVisitor(
   repo: Repository,

@@ -26,9 +26,15 @@ interface ExhibitViewProps {
   >;
   museumName: string;
   museumId: string;
+  museumSlug?: string;
 }
 
-export default function ExhibitView({ exhibit, museumName, museumId }: ExhibitViewProps) {
+export default function ExhibitView({
+  exhibit,
+  museumName,
+  museumId,
+  museumSlug,
+}: ExhibitViewProps) {
   const [lang, setLang] = useState<Language>('ja');
 
   const title =
@@ -106,6 +112,7 @@ export default function ExhibitView({ exhibit, museumName, museumId }: ExhibitVi
       <FavoriteButton
         item={{
           museumId,
+          museumSlug,
           museumName,
           exhibitId: exhibit.id,
           exhibitNumber: exhibit.exhibitNumber,

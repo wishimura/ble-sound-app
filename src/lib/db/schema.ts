@@ -20,6 +20,8 @@ export const userRoleEnum = pgEnum('user_role', ['museum_admin', 'operator']);
 
 export const museums = pgTable('museums', {
   id: uuid('id').defaultRandom().primaryKey(),
+  // URL slug used in /[slug] visitor routes — must be unique per service.
+  slug: text('slug').notNull().unique(),
   name: text('name').notNull(),
   description: text('description'),
   type: museumTypeEnum('type').notNull().default('museum'),

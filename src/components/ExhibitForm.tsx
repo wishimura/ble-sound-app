@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useActionState } from 'react';
 import FileUploadButton from '@/components/FileUploadButton';
+import GenerateAudioButton from '@/components/GenerateAudioButton';
 import { Alert, Field, btn, inputClass } from '@/components/ui';
 import type { Exhibit } from '@/lib/repository/types';
 
@@ -119,13 +120,18 @@ export default function ExhibitForm({
       <Field
         label="読み上げテキスト（日本語）"
         htmlFor="narrationJa"
-        hint="音声URLが空のとき、このテキストをAIが読み上げます"
+        hint="音声URLが空のとき、このテキストを来館者の端末がAIで読み上げます。「AIで音声を生成」を押すと、より自然な音声ファイルを生成して上の音声欄に自動セットします"
       >
         <textarea
           id="narrationJa"
           name="narrationJa"
           defaultValue={exhibit?.narrationJa ?? ''}
           className={textareaClass}
+        />
+        <GenerateAudioButton
+          narrationInputId="narrationJa"
+          audioInputId="audioUrlJa"
+          lang="ja"
         />
       </Field>
 
@@ -135,6 +141,11 @@ export default function ExhibitForm({
           name="narrationEn"
           defaultValue={exhibit?.narrationEn ?? ''}
           className={textareaClass}
+        />
+        <GenerateAudioButton
+          narrationInputId="narrationEn"
+          audioInputId="audioUrlEn"
+          lang="en"
         />
       </Field>
 

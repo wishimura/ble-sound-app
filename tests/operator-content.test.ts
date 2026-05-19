@@ -31,8 +31,11 @@ function input(overrides: Record<string, unknown> = {}) {
   });
 }
 
+let slugCounter = 0;
 async function museum(repo: MemoryRepository, name = 'M') {
+  slugCounter += 1;
   return createMuseumByOperator(repo, {
+    slug: `museum-${slugCounter}`,
     name,
     description: null,
     type: 'museum',

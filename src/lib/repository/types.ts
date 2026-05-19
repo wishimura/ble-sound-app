@@ -4,6 +4,7 @@ export type Language = 'ja' | 'en';
 
 export interface Museum {
   id: string;
+  slug: string;
   name: string;
   description: string | null;
   type: MuseumType;
@@ -42,6 +43,7 @@ export interface Exhibit {
 }
 
 export interface NewMuseum {
+  slug: string;
   name: string;
   description: string | null;
   type: MuseumType;
@@ -85,6 +87,7 @@ export interface Repository {
   // ---- visitor ----
   listActiveMuseums(): Promise<Museum[]>;
   getMuseum(id: string): Promise<Museum | null>;
+  getMuseumBySlug(slug: string): Promise<Museum | null>;
   listPublishedExhibits(museumId: string): Promise<Exhibit[]>;
   getPublishedExhibit(museumId: string, exhibitNumber: string): Promise<Exhibit | null>;
   getExhibitById(id: string): Promise<Exhibit | null>;

@@ -54,12 +54,14 @@ describe('main scenario (integration)', () => {
 
     // --- operator sets up two museums + their admins -----------------------
     const artMuseum = await createMuseumByOperator(repo, {
+      slug: 'minato-art',
       name: '湊町近代美術館',
       description: 'アート',
       type: 'museum',
       logoUrl: null,
     });
     const aquarium = await createMuseumByOperator(repo, {
+      slug: 'uminoiro',
       name: 'うみのいろ水族館',
       description: 'アクアリウム',
       type: 'aquarium',
@@ -178,6 +180,7 @@ describe('main scenario (integration)', () => {
   it('rejects duplicate admin emails and duplicate exhibit numbers per museum', async () => {
     const repo = new MemoryRepository();
     const museum = await createMuseumByOperator(repo, {
+      slug: 'test-m',
       name: 'M',
       description: null,
       type: 'museum',
@@ -204,12 +207,14 @@ describe('main scenario (integration)', () => {
   it('operator can list every museum including stopped ones', async () => {
     const repo = new MemoryRepository();
     const a = await createMuseumByOperator(repo, {
+      slug: 'a',
       name: 'A',
       description: null,
       type: 'museum',
       logoUrl: null,
     });
     await createMuseumByOperator(repo, {
+      slug: 'b',
       name: 'B',
       description: null,
       type: 'zoo',

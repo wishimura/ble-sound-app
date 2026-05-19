@@ -4,6 +4,7 @@ import {
   museumInputSchema,
   loginSchema,
   newUserSchema,
+  slugSchema,
 } from '@/lib/validation';
 
 describe('exhibitInputSchema', () => {
@@ -54,19 +55,56 @@ describe('exhibitInputSchema', () => {
 describe('museumInputSchema', () => {
   it('accepts a valid museum', () => {
     const result = museumInputSchema.parse({
+      slug: 'uminoiro',
       name: 'テスト美術館',
       description: '',
       type: 'museum',
       logoUrl: '',
     });
+    expect(result.slug).toBe('uminoiro');
     expect(result.description).toBeNull();
     expect(result.type).toBe('museum');
   });
 
   it('rejects an unknown type', () => {
     expect(
-      museumInputSchema.safeParse({ name: 'x', type: 'spaceship' }).success,
+      museumInputSchema.safeParse({
+        slug: 'x-museum',
+        name: 'x',
+        type: 'spaceship',
+      }).success,
     ).toBe(false);
+  });
+
+  it('rejects a missing slug', () => {
+    expect(
+      museumInputSchema.safeParse({ name: 'x', type: 'museum' }).success,
+    ).toBe(false);
+  });
+});
+
+describe('slugSchema', () => {
+  it('accepts lowercase alphanumeric+hyphen starting with a letter', () => {
+    for (const s of ['uminoiro', 'minato-art', 'museum-2024', 'ab']) {
+      expect(slugSchema.safeParse(s).success).toBe(true);
+    }
+  });
+
+  it('rejects illegal patterns', () => {
+    for (const s of ['', 'a', '2museum', 'with space', 'with_underscore', 'too-long-'.repeat(10)]) {
+      expect(slugSchema.safeParse(s).success).toBe(false);
+    }
+  });
+
+  it('rejects reserved words (admin / api / operator / ...)', () => {
+    for (const s of ['admin', 'api', 'operator', 'login', 'favorites', 'museums']) {
+      expect(slugSchema.safeParse(s).success).toBe(false);
+    }
+  });
+
+  it('lowercases input', () => {
+    const r = slugSchema.parse('Uminoiro');
+    expect(r).toBe('uminoiro');
   });
 });
 

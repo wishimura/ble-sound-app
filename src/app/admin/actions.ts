@@ -41,8 +41,9 @@ function readExhibitForm(formData: FormData) {
 
 function describeError(e: unknown): string {
   if (isAppError(e)) return e.message;
-  if (e instanceof Error && /unique/i.test(e.message)) {
-    return 'その展示番号は既に使われています';
+  if (e instanceof Error) {
+    if (/slug/i.test(e.message)) return 'そのURL識別子は既に使われています';
+    if (/unique/i.test(e.message)) return 'その展示番号は既に使われています';
   }
   console.error('admin action error', e);
   return '保存に失敗しました。時間をおいて再度お試しください';
@@ -103,6 +104,7 @@ export async function updateMuseumAction(
 ): Promise<ActionState> {
   const session = await requireMuseumAdmin();
   const parsed = museumInputSchema.safeParse({
+    slug: formData.get('slug'),
     name: formData.get('name'),
     description: formData.get('description'),
     type: formData.get('type'),

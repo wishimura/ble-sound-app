@@ -27,7 +27,7 @@ export default async function OperatorMuseumQRPage({
   }
 
   const origin = await getRequestOrigin();
-  const url = `${origin}/m/${museum.id}`;
+  const url = `${origin}/${museum.slug}`;
 
   return (
     <div className="mx-auto max-w-md space-y-5">

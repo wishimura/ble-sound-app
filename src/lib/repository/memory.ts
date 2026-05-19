@@ -28,6 +28,12 @@ export class MemoryRepository implements Repository {
     return this.museumsById.get(id) ?? null;
   }
 
+  async getMuseumBySlug(slug: string) {
+    return (
+      [...this.museumsById.values()].find((m) => m.slug === slug) ?? null
+    );
+  }
+
   async listPublishedExhibits(museumId: string) {
     return [...this.exhibitsById.values()]
       .filter((e) => e.museumId === museumId && e.isPublished)
@@ -116,6 +122,13 @@ export class MemoryRepository implements Repository {
   async updateMuseum(id: string, update: MuseumUpdate) {
     const existing = this.museumsById.get(id);
     if (!existing) throw new Error('museum not found');
+    if (
+      update.slug &&
+      update.slug !== existing.slug &&
+      [...this.museumsById.values()].some((m) => m.slug === update.slug)
+    ) {
+      throw new Error('museums_slug_unique');
+    }
     const updated: Museum = { ...existing, ...update };
     this.museumsById.set(id, updated);
     return updated;
@@ -128,8 +141,12 @@ export class MemoryRepository implements Repository {
   }
 
   async createMuseum(input: NewMuseum) {
+    if ([...this.museumsById.values()].some((m) => m.slug === input.slug)) {
+      throw new Error('museums_slug_unique');
+    }
     const museum: Museum = {
       id: randomUUID(),
+      slug: input.slug,
       name: input.name,
       description: input.description,
       type: input.type,

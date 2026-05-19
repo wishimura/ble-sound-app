@@ -39,28 +39,30 @@ export default function FavoritesList({ museumId }: { museumId?: string } = {}) 
 
   return (
     <ul className="space-y-3">
-      {items.map((item) => (
-        <li key={item.exhibitId}>
-          <Card className="flex items-center gap-3 p-4">
-            <Link
-              href={`/m/${item.museumId}/e/${encodeURIComponent(item.exhibitNumber)}`}
-              className="min-w-0 flex-1"
-            >
-              <p className="text-xs text-ink-muted">
-                {item.museumName} ・ No.{item.exhibitNumber}
-              </p>
-              <p className="truncate font-medium text-ink">{item.title}</p>
-            </Link>
-            <button
-              type="button"
-              onClick={() => removeFavorite(item.exhibitId)}
-              className="flex-none rounded-full border border-line px-3 py-1.5 text-xs text-ink-muted hover:bg-canvas"
-            >
-              削除
-            </button>
-          </Card>
-        </li>
-      ))}
+      {items.map((item) => {
+        const href = item.museumSlug
+          ? `/${item.museumSlug}/e/${encodeURIComponent(item.exhibitNumber)}`
+          : `/m/${item.museumId}/e/${encodeURIComponent(item.exhibitNumber)}`;
+        return (
+          <li key={item.exhibitId}>
+            <Card className="flex items-center gap-3 p-4">
+              <Link href={href} className="min-w-0 flex-1">
+                <p className="text-xs text-ink-muted">
+                  {item.museumName} ・ No.{item.exhibitNumber}
+                </p>
+                <p className="truncate font-medium text-ink">{item.title}</p>
+              </Link>
+              <button
+                type="button"
+                onClick={() => removeFavorite(item.exhibitId)}
+                className="flex-none rounded-full border border-line px-3 py-1.5 text-xs text-ink-muted hover:bg-canvas"
+              >
+                削除
+              </button>
+            </Card>
+          </li>
+        );
+      })}
     </ul>
   );
 }

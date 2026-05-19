@@ -31,6 +31,60 @@ const optionalText = z
 
 export const museumTypeSchema = z.enum(['museum', 'aquarium', 'zoo', 'other']);
 
+/**
+ * Reserved URL slugs that must not clash with framework / app routes.
+ * Kept in sync with both server-side validation and client-side BottomNav
+ * pathname detection.
+ */
+export const RESERVED_SLUGS = new Set<string>([
+  'admin',
+  'api',
+  'operator',
+  'm',
+  '_next',
+  'static',
+  'public',
+  'login',
+  'logout',
+  'signin',
+  'signup',
+  'signout',
+  'favorites',
+  'museums',
+  'qr',
+  'samples',
+  'images',
+  'css',
+  'js',
+  'fonts',
+  'about',
+  'contact',
+  'help',
+  'support',
+  'terms',
+  'privacy',
+  'sitemap',
+  'robots',
+  'health',
+  'status',
+  '404',
+  '500',
+  'error',
+  'index',
+]);
+
+export const slugSchema = z
+  .string()
+  .trim()
+  .toLowerCase()
+  .min(2, '識別子は2文字以上で入力してください')
+  .max(32, '識別子は32文字以内で入力してください')
+  .regex(
+    /^[a-z][a-z0-9-]{1,31}$/,
+    '半角英小文字・数字・ハイフンのみ、先頭は英字',
+  )
+  .refine((s) => !RESERVED_SLUGS.has(s), '予約語のため使用できません');
+
 export const loginSchema = z.object({
   email: z.string().trim().toLowerCase().email('メールアドレスの形式が正しくありません'),
   password: z.string().min(1, 'パスワードを入力してください'),
@@ -86,6 +140,7 @@ export const passwordChangeSchema = z
   });
 
 export const museumInputSchema = z.object({
+  slug: slugSchema,
   name: z.string().trim().min(1, '施設名は必須です').max(200),
   description: optionalText,
   type: museumTypeSchema,

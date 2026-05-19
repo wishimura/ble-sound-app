@@ -43,6 +43,22 @@ export default function MuseumForm({
         />
       </Field>
 
+      <Field
+        label="URL識別子（スラッグ）"
+        htmlFor="slug"
+        hint="来館者URLに使われます（例: uminoiro）。半角英小文字・数字・ハイフン、先頭は英字。変更すると既存QRコードのURLが無効になります"
+      >
+        <input
+          id="slug"
+          name="slug"
+          required
+          pattern="[a-z][a-z0-9-]{1,31}"
+          defaultValue={museum?.slug ?? ''}
+          placeholder="例: uminoiro"
+          className={inputClass}
+        />
+      </Field>
+
       <Field label="施設タイプ" htmlFor="type">
         <select
           id="type"

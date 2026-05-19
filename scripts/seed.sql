@@ -29,6 +29,7 @@ END $$;
 
 CREATE TABLE IF NOT EXISTS museums (
   id          uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  slug        text NOT NULL UNIQUE,
   name        text NOT NULL,
   description text,
   type        museum_type NOT NULL DEFAULT 'museum',
@@ -36,6 +37,16 @@ CREATE TABLE IF NOT EXISTS museums (
   is_active   boolean NOT NULL DEFAULT true,
   created_at  timestamptz NOT NULL DEFAULT now()
 );
+
+-- 既存DB向け: URLスラッグ列を追加（QRコード用の短いURL）。
+ALTER TABLE museums ADD COLUMN IF NOT EXISTS slug text;
+-- シードのデモ施設は固定スラッグに復元。
+UPDATE museums SET slug = 'minato-art' WHERE id = '11111111-1111-1111-1111-111111111111' AND slug IS NULL;
+UPDATE museums SET slug = 'uminoiro'   WHERE id = '22222222-2222-2222-2222-222222222222' AND slug IS NULL;
+-- それ以外の既存施設にはフォールバック値（あとから管理画面で変更可）。
+UPDATE museums SET slug = 'm-' || substring(id::text from 1 for 8) WHERE slug IS NULL;
+ALTER TABLE museums ALTER COLUMN slug SET NOT NULL;
+CREATE UNIQUE INDEX IF NOT EXISTS museums_slug_unique ON museums (slug);
 
 CREATE TABLE IF NOT EXISTS museum_users (
   id            uuid PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -88,12 +99,14 @@ DELETE FROM exhibits;
 DELETE FROM museum_users;
 DELETE FROM museums;
 
-INSERT INTO museums (id, name, description, type, logo_url, is_active) VALUES
+INSERT INTO museums (id, slug, name, description, type, logo_url, is_active) VALUES
   ('11111111-1111-1111-1111-111111111111',
+   'minato-art',
    '湊町近代美術館',
    '近現代の絵画・彫刻を中心に展示する美術館。落ち着いた空間で名作をお楽しみいただけます。',
    'museum', '/samples/logo-art.svg', true),
   ('22222222-2222-2222-2222-222222222222',
+   'uminoiro',
    'うみのいろ水族館',
    '深海から沿岸まで、海の生きものたちの多様な世界をご紹介します。',
    'aquarium', '/samples/logo-aqua.svg', true);

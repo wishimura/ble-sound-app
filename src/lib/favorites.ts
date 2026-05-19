@@ -7,6 +7,9 @@
  */
 export interface FavoriteItem {
   museumId: string;
+  /** URL slug, added so favorites can deep-link to /[slug]/e/...
+   *  Optional for backward compatibility with entries saved before slugs. */
+  museumSlug?: string;
   museumName: string;
   exhibitId: string;
   exhibitNumber: string;

@@ -25,6 +25,7 @@ describe('issue + first-login flow', () => {
   async function setup() {
     const repo = new MemoryRepository();
     const museum = await createMuseumByOperator(repo, {
+      slug: 'museum-x',
       name: 'M',
       description: null,
       type: 'museum',

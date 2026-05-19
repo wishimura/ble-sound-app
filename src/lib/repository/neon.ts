@@ -32,6 +32,15 @@ export class NeonRepository implements Repository {
     return rows[0] ?? null;
   }
 
+  async getMuseumBySlug(slug: string) {
+    const rows = await this.db
+      .select()
+      .from(museums)
+      .where(eq(museums.slug, slug))
+      .limit(1);
+    return rows[0] ?? null;
+  }
+
   async listPublishedExhibits(museumId: string) {
     return this.db
       .select()
