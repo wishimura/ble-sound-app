@@ -1,9 +1,10 @@
 'use client';
 
-import { useActionState } from 'react';
+import { useActionState, useRef, useState } from 'react';
 import FileUploadButton from '@/components/FileUploadButton';
 import { Alert, Field, btn, inputClass } from '@/components/ui';
 import { museumTypeLabel } from '@/lib/i18n';
+import { useUnsavedWarning } from '@/lib/use-unsaved-warning';
 import type { Museum } from '@/lib/repository/types';
 
 interface ActionState {
@@ -27,9 +28,41 @@ export default function MuseumForm({
   successMessage?: string;
 }) {
   const [state, formAction, pending] = useActionState(action, {});
+  const [dirty, setDirty] = useState(false);
+  useUnsavedWarning(dirty && !pending);
+
+  const originalSlug = museum?.slug ?? '';
+  const formRef = useRef<HTMLFormElement>(null);
+
+  function guardSlugChange(e: React.FormEvent<HTMLFormElement>) {
+    if (!museum) return; // creating a new museum -> no risk
+    const fd = new FormData(e.currentTarget);
+    const next = String(fd.get('slug') ?? '').trim();
+    if (next && next !== originalSlug) {
+      const ok = window.confirm(
+        [
+          '施設のURL識別子（スラッグ）を変更しようとしています。',
+          '',
+          `  旧: ${originalSlug}`,
+          `  新: ${next}`,
+          '',
+          '変更すると、印刷済みのQRコードや、共有された旧URLは無効になります。',
+          'よろしいですか？',
+        ].join('\n'),
+      );
+      if (!ok) e.preventDefault();
+    }
+    setDirty(false);
+  }
 
   return (
-    <form action={formAction} className="space-y-5">
+    <form
+      ref={formRef}
+      action={formAction}
+      onChange={() => setDirty(true)}
+      onSubmit={guardSlugChange}
+      className="space-y-5"
+    >
       {state.error ? <Alert>{state.error}</Alert> : null}
       {state.ok && successMessage ? <Alert kind="success">{successMessage}</Alert> : null}
 

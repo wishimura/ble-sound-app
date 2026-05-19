@@ -1,10 +1,11 @@
 'use client';
 
 import Link from 'next/link';
-import { useActionState } from 'react';
+import { useActionState, useState } from 'react';
 import FileUploadButton from '@/components/FileUploadButton';
 import GenerateAudioButton from '@/components/GenerateAudioButton';
 import { Alert, Field, btn, inputClass } from '@/components/ui';
+import { useUnsavedWarning } from '@/lib/use-unsaved-warning';
 import type { Exhibit } from '@/lib/repository/types';
 
 interface ActionState {
@@ -29,10 +30,17 @@ export default function ExhibitForm({
   museumId?: string;
 }) {
   const [state, formAction, pending] = useActionState<ActionState, FormData>(action, {});
+  const [dirty, setDirty] = useState(false);
+  useUnsavedWarning(dirty && !pending);
   const textareaClass = `${inputClass} min-h-28 resize-y`;
 
   return (
-    <form action={formAction} className="space-y-5">
+    <form
+      action={formAction}
+      onChange={() => setDirty(true)}
+      onSubmit={() => setDirty(false)}
+      className="space-y-5"
+    >
       {state.error ? <Alert>{state.error}</Alert> : null}
       {museumId ? <input type="hidden" name="museumId" value={museumId} /> : null}
       {exhibit ? <input type="hidden" name="id" value={exhibit.id} /> : null}

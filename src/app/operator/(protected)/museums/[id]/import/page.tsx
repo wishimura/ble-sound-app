@@ -65,10 +65,28 @@ export default async function OperatorCsvImportPage({
 
       <Card className="p-5">
         <h2 className="font-semibold text-ink">CSVをアップロード</h2>
-        <p className="mt-1 mb-4 text-sm text-ink-muted">
-          UTF-8（BOM付き可）の CSV ファイルを選択してください。
-        </p>
-        <CsvImportForm museumId={museum.id} />
+        <p className="mt-1 text-sm text-ink-muted">UTF-8 形式の CSV ファイルを選択してください。</p>
+
+        <details className="mt-3 rounded-xl border border-line bg-canvas p-3 text-xs text-ink-soft">
+          <summary className="cursor-pointer font-medium text-ink">
+            Excel で保存する時の注意
+          </summary>
+          <ul className="mt-2 list-disc space-y-1 pl-5 text-ink-muted">
+            <li>
+              ファイル → 名前を付けて保存 → ファイル形式で <b>「CSV UTF-8 (.csv)」</b>
+              を選んでください（通常の「CSV (.csv)」だと日本語が文字化けします）
+            </li>
+            <li>
+              Google スプレッドシートの場合は「ファイル → ダウンロード →
+              カンマ区切り形式 (.csv)」で自動的に UTF-8 になります
+            </li>
+            <li>1行目はヘッダ（列名）です。データは2行目から記入してください</li>
+          </ul>
+        </details>
+
+        <div className="mt-4">
+          <CsvImportForm museumId={museum.id} />
+        </div>
       </Card>
     </div>
   );

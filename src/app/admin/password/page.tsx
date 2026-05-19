@@ -23,7 +23,7 @@ export default async function AdminPasswordPage() {
         <PasswordChangeForm forced={session.mustChangePassword} />
       </Card>
       <div className="mt-4 flex justify-center">
-        <LogoutButton />
+        <LogoutButton redirectTo="/admin/login" />
       </div>
     </main>
   );

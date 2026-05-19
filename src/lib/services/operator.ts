@@ -75,7 +75,7 @@ export async function deleteMuseumAdmin(repo: Repository, userId: string) {
   const user = await repo.getUserById(userId);
   if (!user) throw notFound('アカウントが見つかりません');
   if (user.role !== 'museum_admin') {
-    throw forbidden('運営者アカウントは削除できません');
+    throw forbidden('運営アカウントは削除できません');
   }
   await repo.deleteUser(userId);
 }

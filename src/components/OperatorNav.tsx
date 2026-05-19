@@ -18,10 +18,10 @@ export default function OperatorNav() {
       <div className="mx-auto max-w-5xl px-4 py-3">
         <div className="flex items-center justify-between gap-3">
           <div>
-            <p className="text-xs uppercase tracking-wide text-accent-dark">運営管理</p>
-            <p className="font-semibold text-ink">サービス運営コンソール</p>
+            <p className="text-xs uppercase tracking-wide text-accent-dark">運営</p>
+            <p className="font-semibold text-ink">運営コンソール</p>
           </div>
-          <LogoutButton />
+          <LogoutButton redirectTo="/operator/login" />
         </div>
         <nav className="mt-3 flex gap-1 overflow-x-auto">
           {links.map((link) => {

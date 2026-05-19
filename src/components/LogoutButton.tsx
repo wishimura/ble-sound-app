@@ -3,7 +3,12 @@
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
-export default function LogoutButton() {
+interface Props {
+  /** Where to send the user after logout. Defaults to the public landing. */
+  redirectTo?: string;
+}
+
+export default function LogoutButton({ redirectTo = '/' }: Props) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
 
@@ -11,7 +16,7 @@ export default function LogoutButton() {
     setLoading(true);
     try {
       await fetch('/api/auth/logout', { method: 'POST' });
-      router.push('/');
+      router.push(redirectTo);
       router.refresh();
     } finally {
       setLoading(false);

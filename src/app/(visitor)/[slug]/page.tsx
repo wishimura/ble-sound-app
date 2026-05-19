@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation';
-import ExhibitGrid from '@/components/ExhibitGrid';
+import ExhibitGridSearchable from '@/components/ExhibitGridSearchable';
 import MuseumHeader from '@/components/MuseumHeader';
 import {
   getMuseumBySlugCached,
@@ -34,7 +34,7 @@ export default async function MuseumHomeBySlug({
       <MuseumHeader museum={museum} />
       <section className="space-y-3 px-5">
         <h2 className="text-sm font-medium text-ink-soft">展示一覧</h2>
-        <ExhibitGrid museumSlug={museum.slug} exhibits={exhibits} />
+        <ExhibitGridSearchable museumSlug={museum.slug} exhibits={exhibits} />
       </section>
     </main>
   );

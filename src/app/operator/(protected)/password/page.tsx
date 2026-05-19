@@ -8,7 +8,7 @@ export default async function OperatorPasswordPage() {
   await requireOperator();
   return (
     <div className="mx-auto max-w-md space-y-5">
-      <PageTitle title="パスワード変更" subtitle="運営者アカウントのパスワードを更新します" />
+      <PageTitle title="パスワード変更" subtitle="運営アカウントのパスワードを更新します" />
       <Card className="p-5">
         <PasswordChangeForm />
       </Card>

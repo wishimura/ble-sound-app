@@ -19,10 +19,10 @@ export default function AdminNav({ museumName }: { museumName: string }) {
       <div className="mx-auto max-w-5xl px-4 py-3">
         <div className="flex items-center justify-between gap-3">
           <div className="min-w-0">
-            <p className="text-xs uppercase tracking-wide text-accent-dark">美術館管理</p>
+            <p className="text-xs uppercase tracking-wide text-accent-dark">事業者</p>
             <p className="truncate font-semibold text-ink">{museumName}</p>
           </div>
-          <LogoutButton />
+          <LogoutButton redirectTo="/admin/login" />
         </div>
         <nav className="mt-3 flex gap-1 overflow-x-auto">
           {links.map((link) => {

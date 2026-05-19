@@ -17,7 +17,7 @@ export default function PasswordChangeForm({ forced }: { forced?: boolean }) {
     <form action={formAction} className="space-y-4">
       {forced ? (
         <Alert kind="info">
-          初回ログインです。安全のため、運営者から発行された初期パスワードを
+          初回ログインです。安全のため、運営から発行された初期パスワードを
           ご自身のパスワードに変更してください。
         </Alert>
       ) : null}

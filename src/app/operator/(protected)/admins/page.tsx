@@ -5,7 +5,7 @@ import { requireOperator } from '@/lib/auth/session';
 import { getRepository } from '@/lib/repository';
 import { listMuseumAdmins, listMuseumsForOperator } from '@/lib/services/operator';
 
-export const metadata = { title: '管理者管理' };
+export const metadata = { title: '事業者管理' };
 
 export default async function OperatorAdminsPage() {
   await requireOperator();
@@ -17,7 +17,7 @@ export default async function OperatorAdminsPage() {
 
   return (
     <div className="space-y-6">
-      <PageTitle title="管理者管理" subtitle="美術館管理者アカウントの発行と一覧" />
+      <PageTitle title="事業者管理" subtitle="事業者アカウントの発行と一覧" />
 
       <div className="grid gap-6 lg:grid-cols-2">
         <Card className="p-5">

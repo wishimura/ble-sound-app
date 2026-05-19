@@ -21,15 +21,15 @@ export default function RootPage() {
       </h1>
       <p className="mt-3 text-sm leading-relaxed text-ink-soft">
         ご来館者の方は、施設に掲示の QR コードからアクセスしてください。
-        以下は施設運営者・担当者向けのログイン入口です。
+        以下は運営・事業者向けのログイン入口です。
       </p>
 
       <div className="mt-8 space-y-3">
         <Link href="/operator/login" className={btn('primary', 'w-full')}>
-          運営者としてログイン
+          運営としてログイン
         </Link>
         <Link href="/admin/login" className={btn('ghost', 'w-full')}>
-          施設担当者としてログイン
+          事業者としてログイン
         </Link>
       </div>
     </main>

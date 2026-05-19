@@ -18,7 +18,7 @@ PC からも触れます。お時間あるときに以下からお試しくだ�
 日本語 / 英語切替、お気に入り保存、AI 読み上げが体験できます。
 
 
-■ 運営者として試す（施設や展示を管理する画面）
+■ 運営として試す（施設や展示を管理する画面）
 
 URL:        https://ble-sound-app.vercel.app/operator/login
 ID:         operator@example.com
@@ -28,7 +28,7 @@ ID:         operator@example.com
 全施設をまとめて見られる管理者ロールです。
 
 
-■ 施設担当者として試す（その施設だけ管理できる画面）
+■ 事業者として試す（その施設だけ管理できる画面）
 
 URL:        https://ble-sound-app.vercel.app/admin/login
 ID:         art-admin@example.com

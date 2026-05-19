@@ -19,7 +19,7 @@ export async function requireMuseumAdmin(): Promise<SessionPayload & { museumId:
   const session = await getSession();
   if (!session) throw unauthorized();
   if (session.role !== 'museum_admin' || !session.museumId) {
-    throw forbidden('美術館管理者権限が必要です');
+    throw forbidden('事業者権限が必要です');
   }
   return { ...session, museumId: session.museumId };
 }
@@ -29,7 +29,7 @@ export async function requireOperator(): Promise<SessionPayload> {
   const session = await getSession();
   if (!session) throw unauthorized();
   if (session.role !== 'operator') {
-    throw forbidden('運営管理者権限が必要です');
+    throw forbidden('運営権限が必要です');
   }
   return session;
 }

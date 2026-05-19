@@ -62,9 +62,10 @@ export default function GenerateAudioButton({
         type="button"
         onClick={generate}
         disabled={status.kind === 'working'}
-        className="rounded-full border border-accent bg-accent-soft px-3 py-1 font-medium text-accent-dark hover:bg-accent hover:text-white disabled:opacity-50"
+        className="inline-flex items-center gap-1.5 rounded-full border border-accent bg-accent-soft px-3 py-1 font-medium text-accent-dark hover:bg-accent hover:text-white disabled:opacity-60"
       >
-        AIで音声を生成（高品質）
+        {status.kind === 'working' ? <Spinner /> : null}
+        {status.kind === 'working' ? '生成中...' : 'AIで音声を生成（高品質）'}
       </button>
       {status.message ? (
         <span
@@ -80,5 +81,21 @@ export default function GenerateAudioButton({
         </span>
       ) : null}
     </div>
+  );
+}
+
+function Spinner() {
+  return (
+    <svg
+      width="12"
+      height="12"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="3"
+      className="animate-spin"
+    >
+      <path d="M21 12a9 9 0 1 1-6.219-8.56" strokeLinecap="round" />
+    </svg>
   );
 }

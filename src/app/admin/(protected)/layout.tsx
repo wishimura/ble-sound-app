@@ -9,7 +9,7 @@ export default async function AdminProtectedLayout({
 }: {
   children: React.ReactNode;
 }) {
-  let museumName = '美術館管理';
+  let museumName = '事業者管理画面';
   try {
     const session = await requireMuseumAdmin();
     const museum = await getOwnMuseum(getRepository(), session);
