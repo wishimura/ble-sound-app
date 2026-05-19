@@ -1,8 +1,9 @@
 'use server';
 
-import { revalidatePath } from 'next/cache';
+import { revalidatePath, revalidateTag } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { requireOperator } from '@/lib/auth/session';
+import { CACHE_TAGS } from '@/lib/cache';
 import { isAppError } from '@/lib/errors';
 import { getRepository } from '@/lib/repository';
 import {
@@ -74,6 +75,7 @@ export async function operatorSaveExhibitAction(
   }
 
   revalidatePath(`/operator/museums/${museumId}/exhibits`);
+  revalidateTag(CACHE_TAGS.exhibits);
   revalidatePath(`/operator/museums/${museumId}`);
   redirect(`/operator/museums/${museumId}/exhibits`);
 }
@@ -86,6 +88,7 @@ export async function operatorDeleteExhibitAction(formData: FormData): Promise<v
     await deleteExhibitForOperator(getRepository(), museumId, id);
   }
   revalidatePath(`/operator/museums/${museumId}/exhibits`);
+  revalidateTag(CACHE_TAGS.exhibits);
   redirect(`/operator/museums/${museumId}/exhibits`);
 }
 
@@ -98,6 +101,7 @@ export async function operatorTogglePublishAction(formData: FormData): Promise<v
     await setExhibitPublishedForOperator(getRepository(), museumId, id, publish);
   }
   revalidatePath(`/operator/museums/${museumId}/exhibits`);
+  revalidateTag(CACHE_TAGS.exhibits);
 }
 
 export async function operatorImportCsvAction(
@@ -118,6 +122,7 @@ export async function operatorImportCsvAction(
     const csvText = await file.text();
     const result = await importExhibitsCsv(getRepository(), museumId, csvText);
     revalidatePath(`/operator/museums/${museumId}/exhibits`);
+    revalidateTag(CACHE_TAGS.exhibits);
     return { result };
   } catch (e) {
     return { error: e instanceof Error ? e.message : 'インポートに失敗しました' };

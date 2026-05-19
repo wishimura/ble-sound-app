@@ -16,7 +16,7 @@ export default async function AdminQRPage() {
   return (
     <div className="mx-auto max-w-md space-y-5">
       <PageTitle title="QRコード" subtitle="この施設専用のQRコードです" />
-      <QRCodePanel url={url} museumName={museum.name} />
+      <QRCodePanel url={url} museumName={museum.name} slug={museum.slug} />
     </div>
   );
 }

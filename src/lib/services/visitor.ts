@@ -21,19 +21,22 @@ export async function getMuseumBySlugForVisitor(repo: Repository, slug: string) 
   return museum;
 }
 
-/** All published exhibits for a museum, used to render the visitor grid. */
-export async function listPublishedExhibitsForVisitor(
+/**
+ * All published exhibits for a museum, used to render the visitor grid.
+ * Caller is expected to have already validated the museum exists & active.
+ */
+export function listPublishedExhibitsForVisitor(
   repo: Repository,
   museumId: string,
 ) {
-  const museum = await repo.getMuseum(museumId);
-  if (!museum || !museum.isActive) return [];
   return repo.listPublishedExhibits(museumId);
 }
 
 /**
  * Looks up a published exhibit by its (museum-scoped) number.
  * Returns null when nothing matches so the page can show a friendly message.
+ * Caller is expected to have already validated that the museum exists & is
+ * active (callers pass an already-fetched museum id).
  */
 export async function findExhibitByNumber(
   repo: Repository,
@@ -42,8 +45,6 @@ export async function findExhibitByNumber(
 ) {
   const parsed = exhibitNumberSchema.safeParse(rawNumber);
   if (!parsed.success) return null;
-  const museum = await repo.getMuseum(museumId);
-  if (!museum || !museum.isActive) return null;
   return repo.getPublishedExhibit(museumId, parsed.data);
 }
 

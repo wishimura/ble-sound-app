@@ -2,14 +2,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import ExhibitView from '@/components/ExhibitView';
 import { Card, btn } from '@/components/ui';
-import { isAppError } from '@/lib/errors';
-import { getRepository } from '@/lib/repository';
-import {
-  findExhibitByNumber,
-  getMuseumBySlugForVisitor,
-} from '@/lib/services/visitor';
-
-export const dynamic = 'force-dynamic';
+import { getMuseumBySlugCached, getPublishedExhibitCached } from '@/lib/cache';
 
 export default async function ExhibitDetailBySlug({
   params,
@@ -18,17 +11,11 @@ export default async function ExhibitDetailBySlug({
 }) {
   const { slug, number } = await params;
   const exhibitNumber = decodeURIComponent(number);
-  const repo = getRepository();
 
-  let museum;
-  try {
-    museum = await getMuseumBySlugForVisitor(repo, slug);
-  } catch (e) {
-    if (isAppError(e) && e.code === 'NOT_FOUND') notFound();
-    throw e;
-  }
+  const museum = await getMuseumBySlugCached(slug);
+  if (!museum || !museum.isActive) notFound();
 
-  const exhibit = await findExhibitByNumber(repo, museum.id, exhibitNumber);
+  const exhibit = await getPublishedExhibitCached(museum.id, exhibitNumber);
 
   if (!exhibit) {
     return (

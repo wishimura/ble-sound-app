@@ -53,19 +53,66 @@ function esc(s) {
   return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
+/**
+ * SVGs are generated at a 1:1 aspect so they survive `object-cover` cropping
+ * in square tiles. Text is wrapped automatically by inserting line breaks at
+ * a max-char threshold and is centered horizontally so it stays visible
+ * regardless of the container shape.
+ */
+function wrap(text, max) {
+  const out = [];
+  let line = '';
+  for (const ch of text) {
+    if ((line + ch).length > max && line.length > 0) {
+      out.push(line);
+      line = '';
+    }
+    line += ch;
+  }
+  if (line) out.push(line);
+  return out;
+}
+
 function makeSvg(name, { title, subtitle, from, to, accent }) {
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600">
+  const titleLines = wrap(title, 9);
+  const subtitleLines = wrap(subtitle, 22);
+  const titleSize = titleLines.length > 1 ? 68 : 84;
+  const subtitleSize = 28;
+  const titleLineHeight = titleSize * 1.15;
+  const blockHeight =
+    titleLines.length * titleLineHeight +
+    (subtitle ? 24 + subtitleLines.length * (subtitleSize * 1.25) : 0);
+  const startY = 400 - blockHeight / 2 + titleSize * 0.85;
+
+  const titleEls = titleLines
+    .map(
+      (line, i) =>
+        `<text x="400" y="${startY + i * titleLineHeight}" font-family="sans-serif" font-size="${titleSize}" font-weight="700" fill="#ffffff" text-anchor="middle">${esc(line)}</text>`,
+    )
+    .join('\n  ');
+  const subtitleEls = subtitleLines
+    .map((line, i) => {
+      const y =
+        startY +
+        titleLines.length * titleLineHeight +
+        20 +
+        (i + 1) * subtitleSize * 1.25;
+      return `<text x="400" y="${y}" font-family="sans-serif" font-size="${subtitleSize}" fill="#ffffff" opacity="0.9" text-anchor="middle">${esc(line)}</text>`;
+    })
+    .join('\n  ');
+
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800">
   <defs>
     <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0" stop-color="${from}"/>
       <stop offset="1" stop-color="${to}"/>
     </linearGradient>
   </defs>
-  <rect width="800" height="600" fill="url(#g)"/>
-  <circle cx="650" cy="150" r="170" fill="${accent}" opacity="0.28"/>
-  <circle cx="150" cy="490" r="120" fill="${accent}" opacity="0.20"/>
-  <text x="64" y="312" font-family="sans-serif" font-size="54" font-weight="700" fill="#ffffff">${esc(title)}</text>
-  <text x="64" y="360" font-family="sans-serif" font-size="25" fill="#ffffff" opacity="0.88">${esc(subtitle)}</text>
+  <rect width="800" height="800" fill="url(#g)"/>
+  <circle cx="660" cy="180" r="190" fill="${accent}" opacity="0.26"/>
+  <circle cx="140" cy="660" r="160" fill="${accent}" opacity="0.18"/>
+  ${titleEls}
+  ${subtitleEls}
 </svg>
 `;
   writeFileSync(join(dir, name), svg);

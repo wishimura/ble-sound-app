@@ -1,8 +1,9 @@
 'use server';
 
-import { revalidatePath } from 'next/cache';
+import { revalidatePath, revalidateTag } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { requireOperator } from '@/lib/auth/session';
+import { CACHE_TAGS } from '@/lib/cache';
 import { getRepository } from '@/lib/repository';
 import { isAppError } from '@/lib/errors';
 import {
@@ -51,6 +52,7 @@ export async function createMuseumAction(
     return { error: describeError(e) };
   }
   revalidatePath('/operator');
+  revalidateTag(CACHE_TAGS.museums);
   redirect('/operator');
 }
 
@@ -62,6 +64,7 @@ export async function toggleMuseumActiveAction(formData: FormData): Promise<void
     await setMuseumActive(getRepository(), id, active);
   }
   revalidatePath('/operator');
+  revalidateTag(CACHE_TAGS.museums);
 }
 
 export interface CreateAdminResult extends ActionState {

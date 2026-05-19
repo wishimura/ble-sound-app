@@ -39,7 +39,7 @@ export default async function OperatorMuseumQRPage({
           <PageTitle title="QRコード" subtitle="この施設の来館者向けQR" />
         </div>
       </div>
-      <QRCodePanel url={url} museumName={museum.name} />
+      <QRCodePanel url={url} museumName={museum.name} slug={museum.slug} />
     </div>
   );
 }

@@ -82,7 +82,7 @@ describe('operator content management', () => {
 });
 
 describe('visitor: published exhibit grid', () => {
-  it('returns only published exhibits and skips inactive museums', async () => {
+  it('returns only published exhibits', async () => {
     const repo = new MemoryRepository();
     const m = await museum(repo, 'M');
     await createExhibitForOperator(repo, m.id, input({ exhibitNumber: '1', isPublished: 'on' }));
@@ -90,10 +90,6 @@ describe('visitor: published exhibit grid', () => {
 
     const list = await listPublishedExhibitsForVisitor(repo, m.id);
     expect(list.map((e) => e.exhibitNumber)).toEqual(['1']);
-
-    await repo.setMuseumActive(m.id, false);
-    const empty = await listPublishedExhibitsForVisitor(repo, m.id);
-    expect(empty).toEqual([]);
   });
 });
 

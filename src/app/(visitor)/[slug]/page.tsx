@@ -1,14 +1,10 @@
 import { notFound } from 'next/navigation';
 import ExhibitGrid from '@/components/ExhibitGrid';
 import MuseumHeader from '@/components/MuseumHeader';
-import { isAppError } from '@/lib/errors';
-import { getRepository } from '@/lib/repository';
 import {
-  getMuseumBySlugForVisitor,
-  listPublishedExhibitsForVisitor,
-} from '@/lib/services/visitor';
-
-export const dynamic = 'force-dynamic';
+  getMuseumBySlugCached,
+  listPublishedExhibitsCached,
+} from '@/lib/cache';
 
 export async function generateMetadata({
   params,
@@ -16,12 +12,9 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  try {
-    const museum = await getMuseumBySlugForVisitor(getRepository(), slug);
-    return { title: `${museum.name} | 音声ガイド` };
-  } catch {
-    return { title: '音声ガイド' };
-  }
+  const museum = await getMuseumBySlugCached(slug);
+  if (!museum) return { title: '音声ガイド' };
+  return { title: `${museum.name} | 音声ガイド` };
 }
 
 export default async function MuseumHomeBySlug({
@@ -30,17 +23,11 @@ export default async function MuseumHomeBySlug({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const repo = getRepository();
 
-  let museum;
-  try {
-    museum = await getMuseumBySlugForVisitor(repo, slug);
-  } catch (e) {
-    if (isAppError(e) && e.code === 'NOT_FOUND') notFound();
-    throw e;
-  }
+  const museum = await getMuseumBySlugCached(slug);
+  if (!museum || !museum.isActive) notFound();
 
-  const exhibits = await listPublishedExhibitsForVisitor(repo, museum.id);
+  const exhibits = await listPublishedExhibitsCached(museum.id);
 
   return (
     <main className="space-y-6 pb-8">

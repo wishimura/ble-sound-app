@@ -1,8 +1,9 @@
 'use server';
 
-import { revalidatePath } from 'next/cache';
+import { revalidatePath, revalidateTag } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { requireMuseumAdmin } from '@/lib/auth/session';
+import { CACHE_TAGS } from '@/lib/cache';
 import { getRepository } from '@/lib/repository';
 import { isAppError } from '@/lib/errors';
 import {
@@ -73,6 +74,7 @@ export async function saveExhibitAction(
 
   revalidatePath('/admin/exhibits');
   revalidatePath('/admin');
+  revalidateTag(CACHE_TAGS.exhibits);
   redirect('/admin/exhibits');
 }
 
@@ -84,6 +86,7 @@ export async function deleteExhibitAction(formData: FormData): Promise<void> {
   }
   revalidatePath('/admin/exhibits');
   revalidatePath('/admin');
+  revalidateTag(CACHE_TAGS.exhibits);
   redirect('/admin/exhibits');
 }
 
@@ -96,6 +99,7 @@ export async function togglePublishAction(formData: FormData): Promise<void> {
   }
   revalidatePath('/admin/exhibits');
   revalidatePath('/admin');
+  revalidateTag(CACHE_TAGS.exhibits);
 }
 
 export async function updateMuseumAction(
@@ -120,5 +124,6 @@ export async function updateMuseumAction(
   }
   revalidatePath('/admin/museum');
   revalidatePath('/admin');
+  revalidateTag(CACHE_TAGS.museums);
   return { ok: true };
 }
