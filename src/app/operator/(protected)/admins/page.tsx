@@ -1,4 +1,5 @@
 import CreateAdminForm from '@/components/CreateAdminForm';
+import DeleteAdminButton from '@/components/DeleteAdminButton';
 import { Badge, Card, PageTitle } from '@/components/ui';
 import { requireOperator } from '@/lib/auth/session';
 import { getRepository } from '@/lib/repository';
@@ -45,8 +46,11 @@ export default async function OperatorAdminsPage() {
                     </p>
                   </div>
                   <Badge tone={u.role === 'operator' ? 'neutral' : 'muted'}>
-                    {u.role === 'operator' ? '運営' : '美術館'}
+                    {u.role === 'operator' ? '運営' : '事業者'}
                   </Badge>
+                  {u.role === 'museum_admin' ? (
+                    <DeleteAdminButton userId={u.id} email={u.email} />
+                  ) : null}
                 </li>
               ))}
             </ul>

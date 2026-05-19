@@ -1,6 +1,6 @@
 'use client';
 
-import { useActionState, useRef, useState } from 'react';
+import { useActionState, useEffect, useState } from 'react';
 import {
   createAdminAction,
   type CreateAdminResult,
@@ -8,34 +8,48 @@ import {
 import { Alert, Field, btn, inputClass } from '@/components/ui';
 import type { Museum } from '@/lib/repository/types';
 
+interface Issued {
+  email: string;
+  museumName: string;
+  initialPassword: string;
+}
+
 export default function CreateAdminForm({ museums }: { museums: Museum[] }) {
   const [state, formAction, pending] = useActionState<CreateAdminResult, FormData>(
     createAdminAction,
     {},
   );
-  const formRef = useRef<HTMLFormElement>(null);
+  const [issued, setIssued] = useState<Issued | null>(null);
+
+  // Whenever the server action reports success, flip into "issued" mode.
+  useEffect(() => {
+    if (state.ok && state.initialPassword && state.email) {
+      setIssued({
+        email: state.email,
+        museumName: state.museumName ?? '',
+        initialPassword: state.initialPassword,
+      });
+    }
+  }, [state]);
+
+  if (issued) {
+    return (
+      <IssuedAccountCard
+        {...issued}
+        onIssueAnother={() => setIssued(null)}
+      />
+    );
+  }
 
   return (
-    <form
-      ref={formRef}
-      action={(fd) => {
-        formAction(fd);
-        formRef.current?.reset();
-      }}
-      className="space-y-4"
-    >
+    <form action={formAction} className="space-y-4">
       {state.error ? <Alert>{state.error}</Alert> : null}
-      {state.ok && state.initialPassword ? (
-        <IssuedAccountCard
-          email={state.email!}
-          museumName={state.museumName ?? ''}
-          initialPassword={state.initialPassword}
-        />
-      ) : null}
 
       <Field label="担当施設" htmlFor="museumId">
-        <select id="museumId" name="museumId" required className={inputClass}>
-          <option value="">選択してください</option>
+        <select id="museumId" name="museumId" required className={inputClass} defaultValue="">
+          <option value="" disabled>
+            選択してください
+          </option>
           {museums.map((m) => (
             <option key={m.id} value={m.id}>
               {m.name}
@@ -64,11 +78,8 @@ function IssuedAccountCard({
   email,
   museumName,
   initialPassword,
-}: {
-  email: string;
-  museumName: string;
-  initialPassword: string;
-}) {
+  onIssueAnother,
+}: Issued & { onIssueAnother: () => void }) {
   const [copied, setCopied] = useState(false);
 
   const message = [
@@ -93,24 +104,29 @@ function IssuedAccountCard({
   }
 
   return (
-    <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-4">
-      <p className="text-sm font-semibold text-emerald-800">
-        アカウントを発行しました
-      </p>
-      <p className="mt-1 text-xs text-emerald-700">
-        この画面を閉じると初期パスワードは再表示できません。必ずコピーして事業者に送ってください。
-      </p>
-      <dl className="mt-3 space-y-2 text-sm">
-        <Row label="施設" value={museumName} />
-        <Row label="ログインID" value={email} />
-        <Row label="初期パスワード" value={initialPassword} mono />
-      </dl>
-      <button
-        type="button"
-        onClick={copyAll}
-        className={btn('secondary', 'mt-3 text-xs')}
-      >
-        {copied ? 'コピーしました' : '連絡用テキストをコピー'}
+    <div className="space-y-4">
+      <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-4">
+        <p className="text-sm font-semibold text-emerald-800">
+          アカウントを発行しました
+        </p>
+        <p className="mt-1 text-xs text-emerald-700">
+          この画面を離れると初期パスワードは再表示できません。必ずコピーして事業者に送ってください。
+        </p>
+        <dl className="mt-3 space-y-2 text-sm">
+          <Row label="施設" value={museumName} />
+          <Row label="ログインID" value={email} />
+          <Row label="初期パスワード" value={initialPassword} mono />
+        </dl>
+        <button
+          type="button"
+          onClick={copyAll}
+          className={btn('secondary', 'mt-3 text-xs')}
+        >
+          {copied ? 'コピーしました' : '連絡用テキストをコピー'}
+        </button>
+      </div>
+      <button type="button" onClick={onIssueAnother} className={btn('ghost', 'w-full')}>
+        別のアカウントを発行する
       </button>
     </div>
   );

@@ -72,6 +72,10 @@ export class MemoryRepository implements Repository {
     return this.usersById.get(id) ?? null;
   }
 
+  async deleteUser(id: string) {
+    this.usersById.delete(id);
+  }
+
   async listExhibits(museumId: string) {
     return [...this.exhibitsById.values()]
       .filter((e) => e.museumId === museumId)

@@ -3,7 +3,11 @@ import { MemoryRepository } from '@/lib/repository/memory';
 import { hashPassword, verifyPassword } from '@/lib/auth/password';
 import { generateInitialPassword } from '@/lib/auth/initial-password';
 import { changeOwnPassword } from '@/lib/services/account';
-import { createMuseumAdmin, createMuseumByOperator } from '@/lib/services/operator';
+import {
+  createMuseumAdmin,
+  createMuseumByOperator,
+  deleteMuseumAdmin,
+} from '@/lib/services/operator';
 import { authenticate } from '@/lib/services/auth';
 import { exhibitInputSchema } from '@/lib/validation';
 
@@ -120,6 +124,52 @@ describe('exhibit narration fields', () => {
     });
     expect(parsed.narrationJa).toBeNull();
     expect(parsed.narrationEn).toBeNull();
+  });
+});
+
+describe('deleteMuseumAdmin', () => {
+  async function fixture() {
+    const repo = new MemoryRepository();
+    const museum = await createMuseumByOperator(repo, {
+      slug: 'm-del',
+      name: 'M',
+      description: null,
+      type: 'museum',
+      logoUrl: null,
+    });
+    const { user } = await createMuseumAdmin(repo, {
+      email: 'vendor@example.com',
+      museumId: museum.id,
+    });
+    return { repo, museum, user };
+  }
+
+  it('removes a museum_admin account', async () => {
+    const { repo, user } = await fixture();
+    await deleteMuseumAdmin(repo, user.id);
+    expect(await repo.getUserById(user.id)).toBeNull();
+  });
+
+  it('throws NOT_FOUND when the user does not exist', async () => {
+    const repo = new MemoryRepository();
+    await expect(deleteMuseumAdmin(repo, 'nope')).rejects.toMatchObject({
+      code: 'NOT_FOUND',
+    });
+  });
+
+  it('refuses to delete an operator account', async () => {
+    const repo = new MemoryRepository();
+    const op = await repo.createUser({
+      museumId: null,
+      email: 'op@example.com',
+      passwordHash: 'x',
+      role: 'operator',
+      mustChangePassword: false,
+    });
+    await expect(deleteMuseumAdmin(repo, op.id)).rejects.toMatchObject({
+      code: 'FORBIDDEN',
+    });
+    expect(await repo.getUserById(op.id)).not.toBeNull();
   });
 });
 

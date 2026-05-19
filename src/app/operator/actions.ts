@@ -9,6 +9,7 @@ import { isAppError } from '@/lib/errors';
 import {
   createMuseumAdmin,
   createMuseumByOperator,
+  deleteMuseumAdmin,
   setMuseumActive,
 } from '@/lib/services/operator';
 import {
@@ -71,6 +72,18 @@ export interface CreateAdminResult extends ActionState {
   initialPassword?: string;
   email?: string;
   museumName?: string;
+}
+
+export async function deleteAdminAction(formData: FormData): Promise<void> {
+  await requireOperator();
+  const id = formData.get('id');
+  if (typeof id !== 'string' || id.length === 0) return;
+  try {
+    await deleteMuseumAdmin(getRepository(), id);
+  } catch (e) {
+    console.error('delete admin failed', e);
+  }
+  revalidatePath('/operator/admins');
 }
 
 export async function createAdminAction(

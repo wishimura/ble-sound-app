@@ -96,6 +96,7 @@ export interface Repository {
   // ---- auth ----
   getUserByEmail(email: string): Promise<MuseumUser | null>;
   getUserById(id: string): Promise<MuseumUser | null>;
+  deleteUser(id: string): Promise<void>;
 
   // ---- museum admin ----
   listExhibits(museumId: string): Promise<Exhibit[]>;

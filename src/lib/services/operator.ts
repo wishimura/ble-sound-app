@@ -1,4 +1,4 @@
-import { conflict, notFound } from '@/lib/errors';
+import { conflict, forbidden, notFound } from '@/lib/errors';
 import { rankPopularExhibits, summarizeExhibits } from '@/lib/analytics';
 import { hashPassword } from '@/lib/auth/password';
 import { generateInitialPassword } from '@/lib/auth/initial-password';
@@ -65,6 +65,19 @@ export async function createMuseumAdmin(
     mustChangePassword: true,
   });
   return { user, initialPassword };
+}
+
+/**
+ * Deletes a vendor (museum_admin) account. Operator accounts are protected
+ * because removing them would lock the platform out of itself.
+ */
+export async function deleteMuseumAdmin(repo: Repository, userId: string) {
+  const user = await repo.getUserById(userId);
+  if (!user) throw notFound('アカウントが見つかりません');
+  if (user.role !== 'museum_admin') {
+    throw forbidden('運営者アカウントは削除できません');
+  }
+  await repo.deleteUser(userId);
 }
 
 export async function getGlobalAnalytics(repo: Repository) {

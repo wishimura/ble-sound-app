@@ -94,6 +94,10 @@ export class NeonRepository implements Repository {
     return rows[0] ?? null;
   }
 
+  async deleteUser(id: string) {
+    await this.db.delete(museumUsers).where(eq(museumUsers.id, id));
+  }
+
   async listExhibits(museumId: string) {
     return this.db
       .select()
